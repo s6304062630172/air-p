@@ -49,18 +49,34 @@ const Cart = () => {
   };
 
   const onChangeData = (event) => {
-    setFormTotal({ ...formTotal, [event.target.name]: event.target.value });
-  };
+   setFormTotal({ ...formTotal, [event.target.name]: event.target.value });
+ };
+ 
+ // const onChangeData = (value) => {
+  //  setFormTotal({ ...formTotal, pay_type: value });
+  //};
 
-  const onChangeSelectTime = (event) => {
-    if (event.target.val === "1") {
-      setFormTotal({ ...formTotal, timeStart: "09:00", timeStop: "10:00" });
-    } else if (event.target.val === "2") {
-      setFormTotal({ ...formTotal, timeStart: "11:00", timeStop: "12:00" });
-    } else {
-      setFormTotal({ ...formTotal, timeStart: "13:00", timeStop: "14:00" });
-    }
-  };
+ // const onChangeSelectTime = (event) => {
+   // if (event.target.val === "1") {
+    //  setFormTotal({ ...formTotal, timeStart: "09:00", timeStop: "10:00" });
+   // } else if (event.target.val === "2") {
+    //  setFormTotal({ ...formTotal, timeStart: "11:00", timeStop: "12:00" });
+  //  } else {
+    //  setFormTotal({ ...formTotal, timeStart: "13:00", timeStop: "14:00" });
+  //  }
+ // };
+ const onChangeSelectTime = (event) => {
+  let selectedTime;
+  if (event.target.value === "1") {
+    selectedTime = { timeStart: "09:00", timeStop: "10:00" };
+  } else if (event.target.value === "2") {
+    selectedTime = { timeStart: "11:00", timeStop: "12:00" };
+  } else {
+    selectedTime = { timeStart: "13:00", timeStop: "14:00" };
+  }
+  
+  setFormTotal({ ...formTotal, ...selectedTime, time: event.target.value });
+};
 
   const onRemoveItem = (val) => {
     if (window.confirm("ต้องการลบสินค้านี้ออกจากตะกร้าหรือไม่ ?") == true) {
@@ -80,7 +96,6 @@ const Cart = () => {
       setProductCart(result);
     }
   };
-
   useEffect(() => {
     onLoadData();
     setFormTotal({
@@ -183,15 +198,15 @@ const Cart = () => {
                   className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
                   name="time"
                   onChange={(e) => onChangeSelectTime(e)}
-                  value={formTotal?.time}
+                  value={formTotal.time ? formTotal.time : ""}
                 >
-                  <option value="1">9.00-10.00</option>
-                  <option value="2">11.00-12.00</option>
-                  <option value="3">13.00-14.00</option>
-                </select>
+                  <option value="" disabled hidden>Choose a time</option>
+                  <option value="1" selected={formTotal.time === "1"}>9.00-10.00</option>
+                  <option value="2" selected={formTotal.time === "2"}>11.00-12.00</option>
+                  <option value="3" selected={formTotal.time === "3"}>13.00-14.00</option>
+                  </select>
               </div>
             </div>
-
             <Typography
               variant="h6"
               className="justify-start font-bold px-2 p-2"
@@ -208,24 +223,28 @@ const Cart = () => {
               />
             </div>
             <div className="flex gap-10 mb-20 ">
+
               <Radio
                 onChange={(e) => onChangeData(e)}
-                // value={formTotal.pay_type}
+                //value={formTotal.pay_type}
                 value="banking"
-                name="pay_type"
+                name="pay_type" pay_type="red"
                 label="Mobaile Banking QR Code"
                 ripple={true}
                 defaultChecked
+               checked={formTotal.pay_type === "banking"}
+                className={formTotal.pay_type === "banking" ? "ring ring-blue-500" : ""}
               />
               <Radio
                 onChange={(e) => onChangeData(e)}
-                name="pay_type"
+                name="pay_type" pay_type="red"
                 label="เงินสด"
                 value="cash"
                 ripple={false}
+                checked={formTotal.pay_type === "cash"}
+              className={formTotal.pay_type === "cash" ? "ring ring-blue-500" : ""}
               />
             </div>
-
             <div className="flexpx-32 space-x-5 mb-10 px-0 p-5 relative justify-center bg-red-900 rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 h-auto w-full py-5  space-y-0">
               <div className="justify-between mx-20 flex flex-wrap">
                 <Typography
@@ -242,7 +261,6 @@ const Cart = () => {
                 </Typography>
               </div>
             </div>
-
             <div className="flex flex-wrap justify-end">
               {productCart.length > 0 && (
                 <button
