@@ -1,0 +1,94 @@
+
+h3
+{
+    font-size: 40px;
+    margin: 50px;
+    
+}
+
+
+.img
+{
+    display: flex;
+    align-items: center;
+}
+
+.add
+{
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    background-color: rgb(172, 172, 250);
+    padding: 10px;
+    border-radius: 30px;
+    
+    margin-right: 30px;
+}
+.close
+{
+    float: right;
+    margin-right: 30px;
+}
+
+#Model
+{
+    width: 800px;
+    height: 500px;
+    margin-left: 600px;
+   
+    
+}
+#ADD{
+ 
+}
+.Model {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .blocks-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .topic{
+    text-align: center; /* จัดหัวข้อให้อยู่ตรงกลาง */
+    font-weight: bold; /* ทำให้ตัวอักษรหนาขึ้น */
+  }
+  
+  .block3 {
+    width: 48%;
+    margin-left: 5%; /* ให้ block1 มี margin ด้านขวาเพื่อขยับออกจากขอบกระดาษ */
+  }
+  
+  .block4 {
+    width: 48%; /* ให้ block2 มีความกว้าง 48% */
+    margin-left: 20%; /* ให้ block1 มี margin ด้านขวาเพื่อขยับออกจากขอบกระดาษ */
+    margin-right: 3%;
+  }
+
+  .box{
+    font-size: 22px; /* ปรับขนาดฟ้อนให้ใหญ่ขึ้น */
+  }
+  hr.style1{
+    border-top: 1px solid #8c8b8b;
+  }
+
+  .logo{ /* ขนาดโลโก้ */
+    width: 350px; 
+    height: auto; 
+    margin-bottom: 6%;
+  }
+
+  table.detail {
+    border-collapse: collapse;
+    width: 100%; /* หรือคุณสามารถกำหนดขนาดตามที่ต้องการ */
+  }
+  
+  table.detail th,
+  table.detail td {
+    border: 1px solid black; /* กำหนดเส้นขอบ */
+    padding: 8px; /* กำหนดระยะห่างภายในเซลล์ */
+  }

@@ -1,0 +1,50 @@
+.sidebar
+{
+    
+    height: calc(100vh - 0px);
+    background-color: rgb(225, 239, 255);
+    width: 15rem;
+
+    margin: 0px;
+    
+   
+   
+   
+}
+.title
+{
+    
+    cursor: pointer;
+    display: flex;
+    text-align: center;
+    color: rgb(36, 36, 58);
+    background-color: aliceblue;
+    padding: 25px;
+    margin: 10px;
+    border-radius: 15px;
+    
+
+    
+}
+.a
+{
+    margin-top: -5px;
+    margin-left: 10px; 
+    font-size: 22px;
+    
+    
+}
+
+.topLeft
+{
+    font-weight: bolder;
+    font-size: 30px;
+    cursor: pointer;
+    margin: 40px;
+
+}
+.title.active, .title:hover
+{
+    background-color: rgb(139, 185, 255);
+}
+
