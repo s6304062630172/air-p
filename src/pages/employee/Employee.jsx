@@ -17,6 +17,13 @@ export default function Employee() {
     const [employee_surname, setemployee_surname] = useState("");
     const [employee_phone, setemployee_phone] = useState("");
     const [employee_position, setemployee_position] = useState("");
+    const [employee_address, setemployee_address] = useState("");
+    const [line, setline] = useState("");
+    const [salary, setsalary] = useState("");
+    const [team_number,setteam_number] = useState("");
+    const [subdistrict_id ,setsubdistrict_id] = useState("");
+    const [province_id,setprovince_id ] = useState("");
+    const [district_id ,setdistrict_id] = useState("");
     const [employeeList, setemployeeList] = useState([]);
 
     const getemployee = () => {
@@ -31,14 +38,21 @@ export default function Employee() {
     }, []);
 
     const addEmployee = () => {
-        if (employee_name == "" || employee_surname == "" || employee_phone == "" || employee_position == "") {
+        if (employee_name == "" || employee_surname == "" || employee_phone == "" || employee_position == "" || employee_address == "" || line == "" || salary == "" || team_number == "" || subdistrict_id == "" || province_id == "" || district_id == "" ) {
 
         } else {
             Axios.post("http://localhost:3001/post/employee", {
               employee_name: employee_name,
               employee_surname: employee_surname,
               employee_phone: employee_phone,
-              employee_position: employee_position
+              employee_position: employee_position,
+              employee_address:employee_address,
+              line:line,
+              salary:salary,
+              team_number:team_number,
+              subdistrict_id:subdistrict_id,
+              province_id:province_id,
+              district_id:district_id
             }).then(() => {
 
                 setemployeeList([
@@ -47,7 +61,14 @@ export default function Employee() {
                       employee_name: employee_name,
                       employee_surname: employee_surname,
                       employee_phone: employee_phone,
-                      employee_position: employee_position
+                      employee_position: employee_position,
+                      employee_address:employee_address,
+                      line:line,
+                      salary:salary,
+                      team_number:team_number,
+                      subdistrict_id:subdistrict_id,
+                      province_id:province_id,
+                      district_id:district_id
                     },
                 ]);
             });
@@ -126,6 +147,34 @@ export default function Employee() {
                             <option value={"mechanic"}>mechanic</option>
                             <option value={"Admin"}>Admin</option>
                         </select>
+                        </div>
+                        <div>
+                        <p>Address</p>
+                        <TextField id="outlined-basic" label="Address" variant="outlined" onChange={(event) => { setemployee_address(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>Line</p>
+                        <TextField id="outlined-basic" label="Line" variant="outlined" onChange={(event) => { setline(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>Salary</p>
+                        <TextField id="outlined-basic" label="Salary" variant="outlined" onChange={(event) => { setsalary(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>Team Number</p>
+                        <TextField id="outlined-basic" label="Team Number" variant="outlined" onChange={(event) => { setteam_number(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>subdistrict_id</p>
+                        <TextField id="outlined-basic" label="subdistrict_id" variant="outlined" onChange={(event) => { setsubdistrict_id(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>province_id</p>
+                        <TextField id="outlined-basic" label="province_id" variant="outlined" onChange={(event) => { setprovince_id(event.target.value) }} />
+                        </div>
+                        <div>
+                        <p>district_id</p>
+                        <TextField id="outlined-basic" label="district_id" variant="outlined" onChange={(event) => { setdistrict_id(event.target.value) }} />
                         </div>
                     </div>
             

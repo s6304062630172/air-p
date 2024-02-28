@@ -384,12 +384,20 @@ app.post("/post/employee", (req, res) => {
   const employee_surname = req.body.employee_surname;
   const employee_phone = req.body.employee_phone;
   const employee_position = req.body.employee_position;
+  const employee_address = req.body.employee_address;
+  const line = req.body.line;
+  const salary = req.body.salary;
+  const team_number = req.body.team_number;
+  const subdistrict_id = req.body.subdistrict_id;
+  const province_id = req.body.province_id;
+  const district_id = req.body.district_id;
+
 
 
 
   db.query(
-    "INSERT INTO employee (employee_name,employee_surname,employee_phone,employee_position) VALUES(?,?,?,?) ",
-    [employee_name,employee_surname,employee_phone,employee_position],
+    "INSERT INTO employee (employee_name,employee_surname,employee_phone,employee_position,employee_address,line,salary,team_number,subdistrict_id,province_id,district_id) VALUES(?,?,?,?,?,?,?,?,?,?,?) ",
+    [employee_name,employee_surname,employee_phone,employee_position,employee_address,line,salary,team_number,subdistrict_id,province_id,district_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -426,10 +434,10 @@ app.get('/editemployee/:employee_id',(req,res)=>{
 
 app.put('/updateemployee/:employee_id',(req,res)=>{
   
-  const sql = "UPDATE employee SET employee_name = ?,employee_surname = ?,employee_phone = ?,employee_position = ? WHERE employee_id =?"
+  const sql = "UPDATE employee SET employee_name = ?,employee_surname = ?,employee_phone = ?,employee_position = ?,employee_address=?,line = ?,salary = ?,team_number = ?, subdistrict_id = ?,province_id = ?,district_id = ? WHERE employee_id =?"
   
   const employee_id =req.params.employee_id;
-  db.query(sql,[req.body.employee_name,req.body.employee_surname,req.body.employee_phone,req.body.employee_position,employee_id],(err,result)=>{
+  db.query(sql,[req.body.employee_name,req.body.employee_surname,req.body.employee_phone,req.body.employee_position,req.body.employee_address,req.body.line,req.body.salary,req.body.team_number,req.body.subdistrict_id,req.body.province_id,req.body.district_id,employee_id],(err,result)=>{
     if(err) return res.json("error") 
     return res.json({updated: true})
   })  

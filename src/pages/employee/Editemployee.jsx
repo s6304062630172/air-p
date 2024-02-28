@@ -11,6 +11,13 @@ export default function Editemployee() {
     const [employee_surname, setemployee_surname] = useState('');
     const [employee_phone, setemployee_phone] = useState('');
     const [employee_position, setemployee_position] = useState('');
+    const [employee_address, setemployee_address] = useState("");
+    const [line, setline] = useState("");
+    const [salary, setsalary] = useState("");
+    const [team_number,setteam_number] = useState("");
+    const [subdistrict_id ,setsubdistrict_id] = useState("");
+    const [province_id,setprovince_id ] = useState("");
+    const [district_id ,setdistrict_id] = useState("");
     useEffect(()=>{
         axios.get(`http://localhost:3001/Editemployee/${employee_id}`)
         .then(res => {
@@ -18,6 +25,14 @@ export default function Editemployee() {
             setemployee_surname(res.data[0].employee_surname)
             setemployee_phone(res.data[0].employee_phone)
             setemployee_position(res.data[0].employee_position)
+            setemployee_address(res.data[0].employee_address)
+            setline(res.data[0].line)
+            setsalary(res.data[0].salary)
+            setteam_number(res.data[0].team_number)
+            setsubdistrict_id(res.data[0].subdistrict_id)
+            setprovince_id(res.data[0].province_id)
+            setdistrict_id(res.data[0].district_id)
+
         })
         .catch(err => console.log(err))
 
@@ -30,7 +45,7 @@ export default function Editemployee() {
     const hanldeSubmit = (event) => {
         event.preventDefault();
         
-        axios.put(`http://localhost:3001/updateemployee/${employee_id}` , { employee_name,employee_surname,employee_phone,employee_position }) 
+        axios.put(`http://localhost:3001/updateemployee/${employee_id}` , { employee_name,employee_surname,employee_phone,employee_position,employee_address,line,salary,team_number,subdistrict_id,province_id,district_id }) 
         .then(res=>{
             if(res.data.updated){
                 navigate('/employee')
@@ -73,6 +88,41 @@ export default function Editemployee() {
                             <option value="Mechanic" selected={select_position === 'Mechanic'}>Mechanic</option>
                             <option value="Admin" selected={select_position === 'Admin'}>Admin</option>
                         </select >
+                    </div>
+                    <div class="mb-3">
+                        <label for="employee-address" class="form-label">ที่อยู่</label>
+                        <input type="text" class="form-control" id="employee-address" name="name" value={employee_address} 
+                        onChange={(event) => { setemployee_address(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="line" class="form-label">ไลน์</label>
+                        <input type="text" class="form-control" id="line" name="name" value={line} 
+                        onChange={(event) => { setline(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="salary" class="form-label">เงินเดือน</label>
+                        <input type="text" class="form-control" id="salary" name="name" value={salary} 
+                        onChange={(event) => { setsalary(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="team-number" class="form-label">ทีมที่</label>
+                        <input type="text" class="form-control" id="team-number" name="name" value={team_number} 
+                        onChange={(event) => { setteam_number(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="subdistrict" class="form-label">แขวง</label>
+                        <input type="text" class="form-control" id="subdistrict" name="name" value={subdistrict_id} 
+                        onChange={(event) => { setsubdistrict_id(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="province" class="form-label">จังหวัด</label>
+                        <input type="text" class="form-control" id="province" name="name" value={province_id} 
+                        onChange={(event) => { setprovince_id(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="district" class="form-label">เขต</label>
+                        <input type="text" class="form-control" id="district" name="name" value={district_id} 
+                        onChange={(event) => { setdistrict_id(event.target.value) }} />
                     </div>
          
                     <button type="submit" class="btn btn-primary">บันทึก</button>
