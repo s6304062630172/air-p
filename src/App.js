@@ -14,6 +14,8 @@ import "./app.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Editemployee from "./pages/employee/Editemployee";
 import Editquotation from "./pages/quotation/Editquotation";
+import Checkstatus from './pages/checkstatus/Checkstatus';
+import Editcheckstatus from './pages/checkstatus/Editcheckstatus';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -32,9 +34,11 @@ function App() {
           <Route path="/employee" element={<Employee />} /> 
           <Route path="/product" element={<Product />} /> 
           <Route path="/quotation" element={<Quotation />} /> 
+          <Route path="/checkstatus" element={<Checkstatus />} /> 
           <Route path="/Editproduct/:product_id" element={<Editproduct />} />
           <Route path="/Editquotation/:no_quotation" element={<Editquotation />} />
           <Route path="/Editemployee/:employee_id" element={<Editemployee />} />
+          <Route path="/Editcheckstatus/:purchase_id" element={<Editcheckstatus />} />
           <Route path="Calendar" element={
               <>
                 <Sidebar />

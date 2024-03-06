@@ -128,10 +128,9 @@ app.put('/update/:product_id',(req,res)=>{
 
 
 
-
-
-
 ////////////////Quatation////////////////
+
+
 app.get('/get/quotation', (req, res) => {
   db.query("SELECT * FROM quotation", (err, result) => {
     if (err) {
@@ -143,7 +142,6 @@ app.get('/get/quotation', (req, res) => {
   });
 
 });
-
 
 app.post("/post/create", (req, res) => {
 
@@ -157,13 +155,11 @@ app.post("/post/create", (req, res) => {
   const phone_user = req.body.phone_user;
   const address_user = req.body.address_user;
   const email = req.body.email;
-  const quotation_product_type = req.body.quotation_product_type;
-  const quotation_product_brand = req.body.quotation_product_brand;
-
+  const product_id = req.body.product_id;
 
   db.query(
-    "INSERT INTO quotation (title_quotation,date_,id_tax_user,id_tax_admin,annotation,phone_admin,phone_user,address_user,email,quotation_product_type,quotation_product_brand) VALUES(?,?,?,?,?,?,?,?,?,?.?) ",
-    [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,quotation_product_type,quotation_product_brand],
+    "INSERT INTO quotation (title_quotation,date_,id_tax_user,id_tax_admin,annotation,phone_admin,phone_user,address_user,email,product_id) VALUES(?,?,?,?,?,?,?,?,?,?) ",
+    [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email, product_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -199,113 +195,16 @@ app.post("/post/create", (req, res) => {
 //   });
 // });
 
-app.delete('/delete/quotation/:no_quotation', (req, res) => {
-  const no_quotation = req.params.no_quotation;
-  db.query("DELETE FROM quotation WHERE no_quotation = ?", no_quotation, (err, result) => {
+// drop down หน้า 
+app.get("/product_ID", (req, res) => {
+  db.query("SELECT * FROM product", (err, result) => {
     if (err) {
       console.log(err);
-    } else {
-      res.send(result);
-    }
-  })
-})
-
-
-//Edit
-app.get('/editquotation/:no_quotation',(req,res)=>{
-  const no_quotation = req.params.no_quotation
-  db.query("SELECT * FROM quotation WHERE no_quotation = ?",no_quotation,(err,result)=>{
-    if (err){
-      console.log(err)
-    }else{
-      res.send(result)
-    }
-  })
-  
-})
-
-app.put('/updatequ/:no_quotation',(req,res)=>{
-  
-  const sql = "UPDATE quotation SET title_quotation = ? , date_ = ?,id_tax_user = ?,id_tax_admin = ?,annotation = ?,phone_admin = ?,phone_user = ?,address_user = ?,email = ? WHERE no_quotation =?"
-  
-  const no_quotation =req.params.no_quotation;
-  db.query(sql,[req.body.title_quotation,req.body.date_,req.body.id_tax_user,req.body.phone_admin,req.body.annotation,req.body.phone_admin,req.body.phone_user,req.body.address_user,req.body.email,no_quotation],(err,result)=>{
-    if(err) return res.json("error") 
-    return res.json({updated: true})
-  })  
-
-})
-
-
-
-////////////////Quatation////////////////
-
-
-app.get('/get/quotation', (req, res) => {
-  db.query("SELECT * FROM quotation", (err, result) => {
-    if (err) {
-      console.log(err);
-
     } else {
       res.send(result);
     }
   });
-
 });
-
-app.post("/post/create", (req, res) => {
-
-
-  const title_quotation = req.body.title_quotation;
-  const date_ = req.body.date_;
-  const id_tax_user = req.body.id_tax_user;
-  const id_tax_admin = req.body.id_tax_admin;
-  const annotation = req.body.annotation;
-  const phone_admin = req.body.phone_admin;
-  const phone_user = req.body.phone_user;
-  const address_user = req.body.address_user;
-  const email = req.body.email;
-  const quotation_product_type = req.body.quotation_product_type;
-  const quotation_product_brand = req.body.quotation_product_brand;
-
-
-  db.query(
-    "INSERT INTO quotation (title_quotation,date_,id_tax_user,id_tax_admin,annotation,phone_admin,phone_user,address_user,email,quotation_product_type,quotation_product_brand) VALUES(?,?,?,?,?,?,?,?,?,?.?) ",
-    [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,quotation_product_type,quotation_product_brand],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("Values Inserted");
-      }
-    }
-  );
-});
-
-//  // API Endpoint เพื่อดึงข้อมูล product_brands จากตาราง product
-// app.get('/product_brand', (req, res) => {
-//   const sql = 'SELECT DISTINCT product_brand_name FROM product_brand'; // Query SQL สำหรับดึงข้อมูล product_brands
-//   db.query(sql, (error, results, fields) => { // ใช้ db.query แทน connection.query
-//     if (error) {
-//       console.error('Error fetching product brands:', error);
-//       res.status(500).send('Error fetching product brands');
-//       return;
-//     }
-//     res.json(results); // ส่งข้อมูล product_brands กลับไปยัง React ในรูปแบบ JSON
-//   });
-// });
-
-// app.get('/product_type', (req, res) => {
-//   const sql = 'SELECT DISTINCT product_type_name FROM product_type'; 
-//   db.query(sql, (error, results, fields) => { 
-//     if (error) {
-//       console.error('Error fetching product types:', error);
-//       res.status(500).send('Error fetching product types');
-//       return;
-//     }
-//     res.json(results); 
-//   });
-// });
 
 // แสดงรายละเอียดสินค้าในใบเสนอราคา
 
@@ -419,18 +318,18 @@ app.delete('/delete/employee/:employee_id', (req, res) => {
   })
 })
 
-//Edit
-app.get('/editemployee/:employee_id',(req,res)=>{
+//Edit Employee
+ app.get('/editemployee/:employee_id',(req,res)=>{
   const employee_id = req.params.employee_id
   db.query("SELECT * FROM employee WHERE employee_id = ?",employee_id,(err,result)=>{
     if (err){
       console.log(err)
     }else{
-      res.send(result)
-    }
-  })
+       res.send(result)
+     }
+   })
   
-})
+ })
 
 app.put('/updateemployee/:employee_id',(req,res)=>{
   
@@ -444,6 +343,49 @@ app.put('/updateemployee/:employee_id',(req,res)=>{
 
 })
 
+//////Check status///////////
+
+app.get('/get/checkstatus', (req, res) => {
+  db.query("SELECT * FROM purchase", (err, result) => {
+    if (err) {
+      console.log(err);
+
+    } else {
+      res.send(result);
+    }
+  });
+
+});
+
+//Edit status
+app.get('/editcheckstatus/:purchase_id',(req,res)=>{
+  const purchase_id = req.params.purchase_id
+  db.query("SELECT * FROM purchase WHERE purchase_id = ?",purchase_id,(err,result)=>{
+    if (err){
+      console.log(err)
+    }else{
+      res.send(result)
+    }
+  })
+  
+})
+
+app.put('/updatecheckstatus/:purchase_id',(req,res)=>{
+  
+  const sql = "UPDATE purchase SET payment_status = ? WHERE purchase_id =?"
+  
+  const purchase_id =req.params.purchase_id;
+  db.query(sql,[req.body.payment_status,purchase_id],(err,result)=>{
+    if(err) return res.json("error") 
+    return res.json({updated: true})
+  })  
+
+})
+
+
+
+
+//P start
 app.get("/product_type", (req, res) => {
   db.query("SELECT * FROM product_type", (err, result) => {
     if (err) {
