@@ -9,6 +9,7 @@ export default function Editcheckstatus() {
     const {purchase_id} = useParams();
     const [payment_amount, setpayment_amount] = useState("");
     const [payment_status, setpayment_status] = useState("");
+    const [work_status, setwork_status] = useState("");
     const [date, setdate] = useState("");
     const [time, settime] = useState("");
     const [date_book, setdate_book] = useState("");
@@ -31,6 +32,7 @@ export default function Editcheckstatus() {
             settimestart_book(res.data[0].timestart_book)
             settimestop_book(res.data[0].timestop_book)
             setemail(res.data[0].email)
+            setwork_status(res.data[0].work_status)
         })
         .catch(err => console.log(err))
 
@@ -40,7 +42,7 @@ export default function Editcheckstatus() {
     const hanldeSubmit = (event) => {
         event.preventDefault();
         
-        axios.put(`http://localhost:3001/updatecheckstatus/${purchase_id}` , { payment_status }) 
+        axios.put(`http://localhost:3001/updatecheckstatus/${purchase_id}` , { payment_status,work_status }) 
         .then(res=>{
             if(res.data.updated){
                 navigate('/checkstatus')
@@ -50,23 +52,6 @@ export default function Editcheckstatus() {
             }
         })
     }
-
-         //แสดงdropdown status
-         const [paymentStatus, setpaymentStatus] = useState([]);
-         useEffect(() => {
-           fetchpaymentStatus();
-         }, []);
-       
-         const fetchpaymentStatus = async () => {
-           try {
-             const response = await fetch('http://localhost:3001/get/checkstatus');
-             const data = await response.json();
-             setpaymentStatus(data);
-           } catch (error) {
-             console.error('Error fetching paymentStatus:', error);
-           }
-         };
-
     return (
         <div>
             <div class="container mt-5">
@@ -75,11 +60,19 @@ export default function Editcheckstatus() {
                 <div class="mb-3">
                     <div>
                         <label for="title-name" class="form-label">สถานะการชำระเงิน</label>
-                        <select required onChange={(event) => { setpayment_status(event.target.value) }}>
+                        <select onChange={(event) => { setpayment_status(event.target.value) }}>
                             <option selected value="">เปลี่ยนสถานะ</option>
-                            <option value={"รอดำเนินการ"}>รอดำเนินการ</option>
-                            <option value={"ชำระเสร็จสิ้น"}>ชำระเสร็จสิ้น</option>
+                            <option value={"รอตรวจสอบ"}>รอตรวจสอบ</option>
+                            <option value={"ชำระสำเร็จ"}>ชำระสำเร็จ</option>
                             <option value={"ชำระไม่สำเร็จ"}>ชำระไม่สำเร็จ</option>
+                        </select>
+                        </div>
+                        <div>
+                        <label for="title-name" class="form-label">สถานะงาน</label>
+                        <select onChange={(event) => { setwork_status(event.target.value) }}>
+                            <option selected value="">เปลี่ยนสถานะ</option>
+                            <option value={"รอตรวจสอบ"}>รอตรวจสอบ</option>
+                            <option value={"ดำเนินงาน"}>ดำเนินงาน</option>
                         </select>
                         </div>
                         <div class="mb-3">

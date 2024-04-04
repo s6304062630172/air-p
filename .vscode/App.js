@@ -6,6 +6,7 @@ import Quotation from "./pages/quotation/Quotation";
 import Editproduct from "./pages/product/Editproduct";
 import SignUp from "./pages/Login/SignUp";
 import Checkstatus from "../src/pages/checkstatus/Checkstatus";
+import Workstatus from "../src/pages/checkstatus/Workstatus";
 
 import "./app.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -28,6 +29,7 @@ function App() {
               <Route path="Employee" element={<Employee />} />
               <Route path="Quotation" element={<Quotation />} />
               <Route path="Checkstatus" element={<Checkstatus />} />
+              <Route path="Workstatus" element={<Workstatus />} />
               <Route path="/Editproduct/:product_id" element={<Editproduct />} />
               {/* <Route path ="SignUp" element={<SignUp />}/> */}
             </Route>
