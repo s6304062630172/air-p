@@ -3,11 +3,16 @@ const app = express();
 const mysql = require('mysql');
 const cors = require('cors');
 const axios = require('axios'); // เพิ่มบรรทัดนี้
-
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
 const LINE_NOTIFY_TOKEN = 'qTTR3oIOBQVR2BLrbjGoiyEE2IjJO5o0wY8fXKq3Wqm'; // นำเข้า LINE_NOTIFY_TOKEN
+//addmay
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+var jwt = require('jsonwebtoken');
+const secret = 'tk-login'
+
 
 const db = mysql.createConnection({
   user: "root",
@@ -16,10 +21,6 @@ const db = mysql.createConnection({
   database: "air-con"
 })
 
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cors());
 
 
 app.get('/product', (req, res) => {
@@ -34,6 +35,42 @@ app.get('/product', (req, res) => {
 
 });
 
+//add may
+app.get('/userInfo/:username',(req,res)=>{
+  const username = req.params.username;
+  db.query("SELECT * FROM user WHERE username = ?",username,(err,result)=>{
+    if(err){
+      console.log(err);
+    }else{
+      res.send(result)
+    }
+  })
+})
+
+app.get('/editaddress/:email', (req, res) => {
+  const email = req.params.email
+  db.query("SELECT address FROM user WHERE email = ?", email, (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      res.send(result)
+    }
+  })
+
+})
+
+app.put('/updateAddress/:email', (req, res) => {
+
+  const sql = "UPDATE user SET address = ? WHERE email =?"
+  const email = req.params.email;
+  db.query(sql, [req.body.address,email], (err, result) => {
+    if (err) return res.json("error")
+    return res.json({ updated: true })
+  })
+
+})
+
+//เดิม
 app.get('/test', (req, res) => {
   db.query("SELECT * FROM test", (err, result) => {
     if (err) {
@@ -473,35 +510,40 @@ app.get("/product_type", (req, res) => {
 });
 
 app.post("/buy-product", (req, res) => {
+  
   // console.log("req---> ", req.body);
   const date = new Date
+  let sum = 0
   for (let i = 0; i < req.body.length; i++) {
-    db.query(
-      " INSERT INTO purchase (email, date, time, payment_amount, timestart_book, timestop_book, pay_type, date_book, payment_status,work_status) VALUES(?,?,?,?,?,?,?,?,?,?) ",
-      [
-        "test@outlook.com",
-        date,
-        date,
-        req.body[i].quantity * req.body[i].product_price,
-        req.body[i].timeStart,
-        req.body[i].timeStop,
-        req.body[i].pay_type,
-        req.body[i].needDate,
+    sum += req.body[i].quantity * req.body[i].product_price;
+  }
+  db.query(
+    " INSERT INTO purchase (email, date, payment_amount,  pay_type,  time_book,payment_status,work_status) VALUES(?,?,?,?,NOW(),?,?) ",
+    [
+      req.body[0].email,
+      date,
+      sum,
+      req.body[0].pay_type,
+       "รอตรวจสอบ",
         "รอตรวจสอบ",
-        "รอตรวจสอบ",
-      ],
-      (err, result) => {
-        if (err) {
-          console.log("error ---> ", err);
-          // return res.json(err)
-        } else {
+    ],
+    (err, result) => {
+      if (err) {
+        console.log("error ---> ", err);
+        // return res.json(err)
+      } else {
+        for (let i = 0; i < req.body.length; i++) {
           db.query(
-            "INSERT INTO ordering (product_id, purchase_id, price, quantity) VALUES(?,?,?,?) ",
+            "INSERT INTO ordering (product_id, purchase_id, price, quantity,date_book,timestart_book,timestop_book,type) VALUES(?,?,?,?,?,?,?,?) ",
             [
               req.body[i].product_id,
               result.insertId,
               req.body[i].quantity * req.body[i].product_price,
               req.body[i].quantity,
+              req.body[i].needDate,
+              req.body[i].timeStart,
+              req.body[i].timeStop,
+              req.body[i].type
             ],
             (err, result) => {
               if (err) {
@@ -509,14 +551,118 @@ app.post("/buy-product", (req, res) => {
               }
             }
           );
+          db.query(
+            "UPDATE product SET product_quantity = product_quantity - ? WHERE product_id = ?",
+            [req.body[i].quantity, req.body[i].product_id],
+            (err, result) => {
+              if (err) {
+                console.log("error ---> ", err);
+              }
+            }
+          );
+
           // res.send("Values Inserted");
         }
       }
-    );
-  }
+    }
+  );
 
   res.send("success");
 });
+
+////////////////////////////////// login register ///////////////////////////////
+app.post('/register', (req, res) => {
+
+
+
+  ////1.เช็ค user
+  const usernameTofind = req.body.username
+  const sqlfind = `SELECT * FROM user WHERE username = '${usernameTofind}'`;
+  db.query(sqlfind, (err, result, fields) => {
+    if (err) {
+      console.error('Error', err);
+      return
+    };
+    if (result.length > 0) {
+      console.log('user found', result[0]);
+      res.send('มีชื่อผู้ใช้นี้อยู่แล้ว')
+
+    } else {
+      const sql = "INSERT INTO user (username,password,address,email,subdistrict_id,province_id,district_id) VALUES(?)"
+      const password = req.body.password
+      bcrypt.hash(password.toString(), saltRounds, (err, hash) => {
+        if (err) {
+          console.log(err)
+        }
+        const values = [
+          req.body.username,
+          hash,
+          req.body.address,
+          req.body.email,
+          req.body.subdistrict_id,
+          req.body.province_id,
+          req.body.district_id
+        ]
+        db.query(sql, [values], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.send(result);
+          }
+        })
+      })
+
+
+
+
+    }
+  })
+})
+
+
+app.post('/login', (req, res) => {
+  const sql = "SELECT * FROM user WHERE email = ?"
+  db.query(sql, [req.body.email], (err, data) => {
+    if (err) { return res.json("ERROR"); }
+    if (data.length > 0) {
+      bcrypt.compare(req.body.password.toString(), data[0].password, (err, isLogin) => {
+        if (isLogin) {
+          var token = jwt.sign({ username: data[0].username }, secret);
+          return res.json({ status: 'ok', message: "Success", token });
+        } else {
+          return res.json("Fail");
+        }
+      })
+    }
+  })
+})
+
+app.post('/authen', (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1]; // ดึง token จาก header
+    var decoded = jwt.verify(token, secret);
+    res.json({ status: "ok", decoded });
+  } catch (err) {
+    res.json({ status: 'error', message: err.message });
+  }
+});
+
+
+// app.post('/login', (req,res)=>{
+//   const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
+
+//   db.query(sql,[req.body.email,req.body.password],(err,data)=>{
+//     if(err){
+//       return res.json("Error");
+//     }
+//     if(data.length > 0 ){
+
+//       return res.json("Success")
+//     }else{
+//       return res.json("Fail")
+//     }
+//   })
+// })
 
 app.listen('3001', () => {
   console.log('server is running on port 3001');

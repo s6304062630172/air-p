@@ -13,10 +13,33 @@ const Modal = ({
     needDate: "",
     timeStart: "",
     timeStop: "",
+    time:""
   });
   const onSubmit = (e) => {
-    e.preventDefault();
-    return returnSubmitData(formData);
+    if (productClick?.product_quantity) {
+      e.preventDefault();
+      return returnSubmitData(formData);
+
+    } else {
+      window.confirm("!!สินค้าหมด!!")
+    }
+  };
+  const onChangeData = (event) => {
+    // กำหนดค่าใหม่ให้กับ formTotal โดยใช้ Spread Operator เพื่อคัดลอกค่าเดิมใน formTotal แล้วเพิ่มหรืออัปเดตค่าใหม่
+    setFormData({ ...formData, [event.target.name]: event.target.value }); //เมื่อเปลี่ยนค่า ให้ใส่ค่าใน formTotal name ด้วยใส่ค่า value ลงในตัวแปร name เเล้ว บันทึกค่าใหม่ลง FormTotal 
+  };
+
+  const onChangeSelectTime = (event) => {
+    let selectedTime;
+    if (event.target.value === "1") {
+      selectedTime = { timeStart: "09:00", timeStop: "10:00" };
+    } else if (event.target.value === "2") {
+      selectedTime = { timeStart: "11:00", timeStop: "12:00" };
+    } else {
+      selectedTime = { timeStart: "13:00", timeStop: "14:00" };
+    }
+
+    setFormData({ ...formData, ...selectedTime, time: event.target.value }); /// ใส่ value time ใน formTotal เป็นค่าที่ได่รับมา จาก event
   };
 
   const onChangeQuantity = (status) => {
@@ -38,7 +61,7 @@ const Modal = ({
   // };
 
   useEffect(() => {
-    console.log("--->test")
+    // console.log("--->test")
     setFormData({
       ...productClick,
       quantity: 1,
@@ -48,9 +71,9 @@ const Modal = ({
     });
   }, [statusModal]);
 
-  useEffect( ()=> {
+  useEffect(() => {
     console.log("--->", productClick)
-  }, [productClick] )
+  }, [productClick])
 
   // useEffect(() => {
   //   console.log("productClick ---> ", productClick);
@@ -123,7 +146,40 @@ const Modal = ({
                       บาท
                     </Typography>
                   </div>
+                  <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
+                  <Typography
+                    variant="h6"
+                    className="justify-start font-bold px-2 p-2"
+                  >
+                    เลือกวัน/เวลาที่ต้องการ
+                  </Typography>
+                  <input
+                    required
+                    onChange={(e) => onChangeData(e)}
+                    type="date"
+                    name="needDate"
+                    min={(new Date()).toISOString().split('T')[0]}
+                    value={formData?.needDate}
+                    
+                    className="bg-gray-400 rounded-lg px-2 w-fit p-2 text-center text-gray-900"
+                  />
+                 
 
+                  <div className="w-72">
+                    <select
+                      required
+                      className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
+                      name="time"
+                      onChange={(e) => onChangeSelectTime(e)}
+                      value={formData.time ? formData.time : ""}
+                    >
+                      <option value="" disabled hidden>Choose a time</option>
+                      <option value="1" selected={formData.time === "1"}>9.00-10.00</option>
+                      <option value="2" selected={formData.time === "2"}>11.00-12.00</option>
+                      <option value="3" selected={formData.time === "3"}>13.00-14.00</option>
+                    </select>
+                  </div>
+                </div>
                   <div className="flex justify-center gap-4 p-2">
                     <Button
                       type="submit"
@@ -160,3 +216,4 @@ const Modal = ({
 };
 
 export default Modal;
+

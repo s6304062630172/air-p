@@ -10,37 +10,62 @@ import {
   onBuyProduct,
   onClearProductCart,
   onGetProductCart,
-} from "../../helpers/storage";
-import _apiProduct from "../../api/product";
+} from "../../helpers/storage"; //////import ตัวตั้งค่าใน local storage ในการจัดการข้อมูล
+import _apiProduct from "../../api/product"; //import api ในการจัดการ prodcut
+import axios from "axios";
 const Cart = () => {
+  const email = localStorage.getItem("email")
   const [productCart, setProductCart] = useState([]);
-  const [formTotal, setFormTotal] = useState({
-    needDate: "",
-    timeStart: "09:00",
-    timeStop: "10:00",
-    time: "",
-    pay_type: "banking",
-  });
   const [price, setPrice] = useState(0);
+  const [formTotal, setFormTotal] = useState({
+    email: email,
+    pay_type: "banking",
+    price: price
+    
+  });
+  const [address, setAddress] = useState('')
+  useEffect(() => {
+    axios.get(`http://localhost:3001/editaddress/${email}`)
+        .then(res => {
+            setAddress(res.data[0].address)
+           
+        })
+        .catch(err => console.log(err))
+}, [])
+
   const onLoadData = async () => {
-    const result = onGetProductCart();
+
+    const result = onGetProductCart(); /// ใส่ค่า productที่อยู่ใน local storage มาใส่ไว้ใน result
     let sum = 0;
-    for (let i = 0; i < result?.length; i++) {
-      sum += result[i].product_price * result[i].quantity;
+    for (let i = 0; i < result?.length; i++) { ///// loop ขนาด ของค่าใน result
+      sum += result[i].product_price * result[i].quantity; ///////// เอาราคาสินค้าเเต่ละอันในreslut * กันจำนวน เพื่อ หาราคารวม
     }
     setPrice(sum);
-    if (result !== null) {
-      setProductCart(result);
+    if (result !== null) { ////ถ้า result ไม่เป้นค่าว่าง
+      setProductCart(result); ////ให้ใส่ค่าสินค้าที่อยู่ ใน result ไว้ใน array productCart
     }
+
+
   };
 
-  const submit = async (event) => {
+
+  const submit = async (event) => { /// เมื่อกดยืนยันคำสั่งซื้อ
     event.preventDefault();
+    axios.put(`http://localhost:3001/updateAddress/${email}`, { address})
+
+            .then(res => {
+                if (res.data.updated) {
+                  console.log(address)
+                  
+                } else {
+                    alert("Not updated")
+                }
+            })
     const params = productCart;
     const setData = params.map((item) => {
-      return { ...item, ...formTotal };
+      return { ...item, ...formTotal }; ///เอาข้อมูลใน param item = ข้อมูลสินค้าในตะกร้า //มารวมกับ ข้อมูลวันที่และเวลาใน FormTotal
     });
-    const result = await _apiProduct.buyProduct(setData);
+    const result = await _apiProduct.buyProduct(setData); /////บันทึกข้อมูลลง database โดยข้อมูลที่มีคือ ข้อมูลใน setData ซึ่งเป็น  params(ข้อมูลใน productcart) + formTotal(ค่าที่กำหดนมา)
     if (result == "success") {
       setProductCart([]);
       onClearProductCart();
@@ -49,34 +74,35 @@ const Cart = () => {
   };
 
   const onChangeData = (event) => {
-   setFormTotal({ ...formTotal, [event.target.name]: event.target.value });
- };
- 
- // const onChangeData = (value) => {
+    // กำหนดค่าใหม่ให้กับ formTotal โดยใช้ Spread Operator เพื่อคัดลอกค่าเดิมใน formTotal แล้วเพิ่มหรืออัปเดตค่าใหม่
+    setFormTotal({ ...formTotal, [event.target.name]: event.target.value }); //เมื่อเปลี่ยนค่า ให้ใส่ค่าใน formTotal name ด้วยใส่ค่า value ลงในตัวแปร name เเล้ว บันทึกค่าใหม่ลง FormTotal 
+  };
+
+  // const onChangeData = (value) => {
   //  setFormTotal({ ...formTotal, pay_type: value });
   //};
 
- // const onChangeSelectTime = (event) => {
-   // if (event.target.val === "1") {
-    //  setFormTotal({ ...formTotal, timeStart: "09:00", timeStop: "10:00" });
-   // } else if (event.target.val === "2") {
-    //  setFormTotal({ ...formTotal, timeStart: "11:00", timeStop: "12:00" });
+  // const onChangeSelectTime = (event) => {
+  // if (event.target.val === "1") {
+  //  setFormTotal({ ...formTotal, timeStart: "09:00", timeStop: "10:00" });
+  // } else if (event.target.val === "2") {
+  //  setFormTotal({ ...formTotal, timeStart: "11:00", timeStop: "12:00" });
   //  } else {
-    //  setFormTotal({ ...formTotal, timeStart: "13:00", timeStop: "14:00" });
+  //  setFormTotal({ ...formTotal, timeStart: "13:00", timeStop: "14:00" });
   //  }
- // };
- const onChangeSelectTime = (event) => {
-  let selectedTime;
-  if (event.target.value === "1") {
-    selectedTime = { timeStart: "09:00", timeStop: "10:00" };
-  } else if (event.target.value === "2") {
-    selectedTime = { timeStart: "11:00", timeStop: "12:00" };
-  } else {
-    selectedTime = { timeStart: "13:00", timeStop: "14:00" };
-  }
-  
-  setFormTotal({ ...formTotal, ...selectedTime, time: event.target.value });
-};
+  // };
+  const onChangeSelectTime = (event) => {
+    let selectedTime;
+    if (event.target.value === "1") {
+      selectedTime = { timeStart: "09:00", timeStop: "10:00" };
+    } else if (event.target.value === "2") {
+      selectedTime = { timeStart: "11:00", timeStop: "12:00" };
+    } else {
+      selectedTime = { timeStart: "13:00", timeStop: "14:00" };
+    }
+
+    setFormTotal({ ...formTotal, ...selectedTime, time: event.target.value }); /// ใส่ value time ใน formTotal เป็นค่าที่ได่รับมา จาก event
+  };
 
   const onRemoveItem = (val) => {
     if (window.confirm("ต้องการลบสินค้านี้ออกจากตะกร้าหรือไม่ ?") == true) {
@@ -99,11 +125,10 @@ const Cart = () => {
   useEffect(() => {
     onLoadData();
     setFormTotal({
-      needDate: "",
-      timeStart: "09:00",
-      timeStop: "10:00",
-      time: "",
+      email: email,
       pay_type: "banking",
+      price: price,
+      type:"ติดตั้ง"
     });
   }, []);
   return (
@@ -166,52 +191,73 @@ const Cart = () => {
                         {" "}
                         จำนวนสินค้า: {item?.quantity}
                       </Typography>
+                      <Typography
+                        variant="h6"
+                        color="blue-gray"
+                        className="font-medium font-bold"
+                      >
+                        {" "}
+                        วันที่จอง:{item?.needDate}
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        color="blue-gray"
+                        className="font-medium font-bold"
+                      >
+                        {" "}
+                        เวลาที่จอง: {item?.timeStart} -  {item?.timeStop}
+                      </Typography>
                     </div>
+
                   </div>
+
                 </div>
+                {/* <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
+                  <Typography
+                    variant="h6"
+                    className="justify-start font-bold px-2 p-2"
+                  >
+                    เลือกวันที่ต้องการ
+                  </Typography>
+                  <input
+                    required
+                    onChange={(e) => onChangeData(e)}
+                    type="date"
+                    name="needDate"
+                    min={(new Date()).toISOString().split('T')[0]}
+                    value={formTotal[index]?.needDate}
+                    className="bg-gray-400 rounded-lg px-2 w-fit p-2 text-center text-gray-900"
+                  />
+                  <Typography
+                    variant="h6"
+                    className="justify-start font-bold px-2 p-2"
+                  >
+                    ช่วงเวลาติดตั้ง
+                  </Typography>
+                  <div className="w-72">
+                    <select
+                      required
+                      className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
+                      name="time"
+                      onChange={(e) => onChangeSelectTime(e)}
+                      value={formTotal.time ? formTotal.time : ""}
+                    >
+                      <option value="" disabled hidden>Choose a time</option>
+                      <option value="1" selected={formTotal.time === "1"}>9.00-10.00</option>
+                      <option value="2" selected={formTotal.time === "2"}>11.00-12.00</option>
+                      <option value="3" selected={formTotal.time === "3"}>13.00-14.00</option>
+                    </select>
+                  </div>
+                </div> */}
+
               </div>
             ))}
-            <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
-              <Typography
-                variant="h6"
-                className="justify-start font-bold px-2 p-2"
-              >
-                เลือกวันที่ต้องการ
-              </Typography>
-              <input
-                required
-                onChange={(e) => onChangeData(e)}
-                type="date"
-                name="needDate"
-                value={formTotal?.needDate}
-                className="bg-gray-400 rounded-lg px-2 w-fit p-2 text-center text-gray-900"
-              />
-              <Typography
-                variant="h6"
-                className="justify-start font-bold px-2 p-2"
-              >
-                ช่วงเวลาติดตั้ง
-              </Typography>
-              <div className="w-72">
-                <select
-                  required
-                  className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
-                  name="time"
-                  onChange={(e) => onChangeSelectTime(e)}
-                  value={formTotal.time ? formTotal.time : ""}
-                >
-                  <option value="" disabled hidden>Choose a time</option>
-                  <option value="1" selected={formTotal.time === "1"}>9.00-10.00</option>
-                  <option value="2" selected={formTotal.time === "2"}>11.00-12.00</option>
-                  <option value="3" selected={formTotal.time === "3"}>13.00-14.00</option>
-                  </select>
-              </div>
-            </div>
+
             <Typography
               variant="h6"
               className="justify-start font-bold px-2 p-2"
             >
-              กรอกข้อมูล/ที่อยู๋จัดส่ง
+              กรอกข้อมูล/ที่อยู่จัดส่ง
             </Typography>
             <div className="space-x-5 space-y-5 px-3 p-2 w-full">
               <textarea
@@ -219,7 +265,8 @@ const Cart = () => {
                 name="about"
                 rows={3}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                defaultValue={""}
+                defaultValue={address}
+                onChange={(event) => { setAddress(event.target.value) }}
               />
             </div>
             <div className="flex gap-10 mb-20 ">
@@ -232,7 +279,7 @@ const Cart = () => {
                 label="Mobaile Banking QR Code"
                 ripple={true}
                 defaultChecked
-               checked={formTotal.pay_type === "banking"}
+                checked={formTotal.pay_type === "banking"}
                 className={formTotal.pay_type === "banking" ? "ring ring-blue-500" : ""}
               />
               <Radio
@@ -242,7 +289,7 @@ const Cart = () => {
                 value="cash"
                 ripple={false}
                 checked={formTotal.pay_type === "cash"}
-              className={formTotal.pay_type === "cash" ? "ring ring-blue-500" : ""}
+                className={formTotal.pay_type === "cash" ? "ring ring-blue-500" : ""}
               />
             </div>
             <div className="flexpx-32 space-x-5 mb-10 px-0 p-5 relative justify-center bg-red-900 rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 h-auto w-full py-5  space-y-0">

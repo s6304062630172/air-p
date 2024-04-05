@@ -21,6 +21,7 @@ export default function Workstatus() {
     }, []);
     return (
         <div>
+            
             <h3>รายการงาน</h3>
             <Button color="dark" ripple="light" onClick={() => navigate('/Checkstatus/')} className="mr-2">รอตรวจสอบ</Button>
             <Button color="dark" ripple="light" onClick={() => navigate('/Workstatus/')} className="mr-2" >ดำเนินงาน</Button>

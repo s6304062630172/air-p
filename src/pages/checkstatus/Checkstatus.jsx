@@ -21,7 +21,6 @@ export default function Checkstatus() {
     
     //อัพเดทสถานะของการฟิลเตอร์:
     const [filterStatus, setFilterStatus] = useState("all");
-
     const handleChangeFilterStatus = (status) => {
         setFilterStatus(status);
     };
@@ -61,9 +60,6 @@ export default function Checkstatus() {
                                 <td>{val.pay_type}</td>
                                 <td>{val.payment_status}</td>
                                 <td>{val.work_status}</td>
-
-                               
-
                                 <Link to={`/Editcheckstatus/${val.purchase_id}`} className="btn btn-dark">
     <svg class="h-6 w-6 text-slate-500" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" />
