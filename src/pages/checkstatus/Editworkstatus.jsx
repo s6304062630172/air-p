@@ -6,6 +6,7 @@ export default function Editworkstatus() {
     const { purchase_id } = useParams();
     const [work_status, setWorkStatus] = useState('');
     const [team_number, setTeamNumber] = useState('');
+    const [email, setemail] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -13,16 +14,16 @@ export default function Editworkstatus() {
             .then(res => {
                 setWorkStatus(res.data[0].work_status);
                 setTeamNumber(res.data[0].team_number);
+                setemail(res.data[0].email);
             })
             .catch(err => console.log(err));
     }, [purchase_id]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`http://localhost:3001/updateworkstatus/${purchase_id}`, { work_status, team_number })
+        Axios.put(`http://localhost:3001/updateworkstatus/${purchase_id}`, { work_status, team_number,email })
             .then(({ data }) => {
                 if (data.updated) {
-                   // notifyLine(); // แจ้งเตือน LINE หลังจากบันทึกสถานะสำเร็จ
                     navigate('/workstatus');
                 } else {
                     alert('Not updated');
@@ -30,9 +31,9 @@ export default function Editworkstatus() {
             })
             .catch(error => console.error('Error updating work status:', error));
     };
-
+//Line
     const notifyLine = async () => {
-        const message = `สถานะงาน: ${work_status}\nทีม: ${team_number}\nเลขใบสั่งซื้อ: ${purchase_id}`;
+        const message = `\nสถานะงาน: ${work_status}\nทีม: ${team_number}\nงานที่: ${purchase_id}\nemail: ${email}`;
         try {
             await Axios.post(
                 'http://localhost:3001/notify', // แก้ URL เป็น '/notify' เพื่อเรียกใช้ไฟล์ Notify.js
@@ -75,6 +76,10 @@ export default function Editworkstatus() {
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">เลขใบสั่งซื้อ:</label>
                         <span>{purchase_id}</span>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="title-name" className="form-label">Email:</label>
+                        <span>{email}</span>
                     </div>
                     <div>
         

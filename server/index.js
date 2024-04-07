@@ -7,6 +7,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const LINE_NOTIFY_TOKEN = 'qTTR3oIOBQVR2BLrbjGoiyEE2IjJO5o0wY8fXKq3Wqm'; // นำเข้า LINE_NOTIFY_TOKEN
+
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+
 //addmay
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -401,22 +405,30 @@ app.get('/get/checkstatus', (req, res) => {
 
 });
 
-//Edit status
-app.get('/editcheckstatus/:purchase_id',(req,res)=>{
-  const purchase_id = req.params.purchase_id
-  db.query("SELECT * FROM purchase WHERE purchase_id = ?",purchase_id,(err,result)=>{
-    if (err){
-      console.log(err)
-    }else{
-      res.send(result)
-    }
-  })
-  
-})
+
+app.get('/editcheckstatus/:purchase_id', (req, res) => {
+  const purchase_id = req.params.purchase_id;
+  db.query(
+      "SELECT purchase.*, ordering.product_id, ordering.quantity, product.product_name, product.product_btu " +
+      "FROM purchase " +
+      "JOIN ordering ON purchase.purchase_id = ordering.purchase_id " +
+      "JOIN product ON ordering.product_id = product.product_id " +
+      "WHERE purchase.purchase_id = ?",
+      purchase_id,
+      (err, result) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+              res.json(result);
+          }
+      }
+  );
+});
 
 app.put('/updatecheckstatus/:purchase_id',(req,res)=>{
   
-  const sql = "UPDATE purchase SET payment_status = ?,work_status = ?WHERE purchase_id =?"
+  const sql = "UPDATE purchase SET payment_status = ?,work_status = ?  WHERE purchase_id =?"
   
   const purchase_id =req.params.purchase_id;
   db.query(sql,[req.body.payment_status,req.body.work_status,purchase_id],(err,result)=>{
@@ -429,7 +441,7 @@ app.put('/updatecheckstatus/:purchase_id',(req,res)=>{
 //////Check work status///////////
 
 app.get('/get/workstatus', (req, res) => {
-  db.query("SELECT * FROM purchase WHERE work_status = 'ดำเนินงาน' ", (err, result) => {
+  db.query("SELECT * FROM ordering WHERE work_status = 'ดำเนินงาน' ", (err, result) => {
     if (err) {
       console.log(err);
 
@@ -454,10 +466,10 @@ app.get('/Editworkstatus/:purchase_id',(req,res)=>{
 
 app.put('/updateworkstatus/:purchase_id',(req,res)=>{
   
-  const sql = "UPDATE purchase SET work_status = ?,team_number = ?  WHERE purchase_id =?"
+  const sql = "UPDATE purchase SET work_status = ?,team_number = ?,email = ?  WHERE purchase_id =?"
   
   const purchase_id =req.params.purchase_id;
-  db.query(sql,[req.body.work_status,req.body.team_number,purchase_id],(err,result)=>{
+  db.query(sql,[req.body.work_status,req.body.team_number,req.body.email,purchase_id],(err,result)=>{
     if(err) return res.json("error") 
     return res.json({updated: true})
   })  
@@ -497,6 +509,46 @@ app.post('/notify', async (req, res) => {
       res.status(500).json({ success: false, error: 'Error sending notification' });
   }
 });
+
+//email
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
+      pass: 'xwnythxjudoryuyo' // ใส่รหัสผ่านของคุณที่นี่
+  }
+});
+
+// ใช้ body-parser middleware
+app.use(bodyParser.json());
+
+// เส้นทาง URL notifyEmail
+app.post('/notifyEmail', (req, res) => {
+  const { email, message } = req.body;
+
+  // กำหนดข้อความอีเมล์
+  const mailOptions = {
+      from: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
+      to: email,
+      subject: 'แสงทองแอร์ แอนด์ เซอร์วิส',
+      text: message
+  };
+
+  // ส่งอีเมล์
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          res.status(500).send('Internal Server Error');
+      } else {
+          console.log('Email sent:', info.response);
+          res.status(200).send('Email Sent Successfully');
+      }
+  });
+});
+
+
+
+
 
 //P start
 app.get("/product_type", (req, res) => {

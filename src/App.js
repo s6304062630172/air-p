@@ -20,7 +20,7 @@ import Userquotation from './pages/userquotation/Userquotation';
 import Workstatus from './pages/checkstatus/Workstatus';
 import Editworkstatus from './pages/checkstatus/Editworkstatus';
 import Workfinish from './pages/checkstatus/Workfinish';
-
+import Testcalendar from './pages/checkstatus/Testcalendar';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 function App() {
 
@@ -46,7 +46,7 @@ function App() {
           <Route path="/Userquotation" element={<Userquotation />} />
           <Route path="/Editworkstatus/:purchase_id" element={<Editworkstatus />} />
           <Route path="/Workfinish" element={<Workfinish />} />
-       
+          <Route path="/Testcalendar" element={<Testcalendar />} />
          
         
           <Route path="Calendar" element={

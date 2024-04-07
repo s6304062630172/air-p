@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { event } from 'jquery';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
+import { Button } from "@material-tailwind/react";
 
 export default function Editcheckstatus() {
     
@@ -19,6 +18,9 @@ export default function Editcheckstatus() {
     const [email, setemail] = useState("");
     const [timestop_book, settimestop_book]= useState("");
     const [checkstatusList, setcheckstatusList] = useState([]);
+    const [product_name, setproduct_name] = useState("");
+    const [quantity, setquantity] = useState("");
+    const [product_btu, setproduct_btu] = useState("");
     useEffect(()=>{
         axios.get(`http://localhost:3001/Editcheckstatus/${purchase_id}`)
         .then(res => {
@@ -33,6 +35,10 @@ export default function Editcheckstatus() {
             settimestop_book(res.data[0].timestop_book)
             setemail(res.data[0].email)
             setwork_status(res.data[0].work_status)
+            setproduct_name(res.data[0].product_name)
+            setquantity(res.data[0].quantity)
+            setproduct_btu(res.data[0].product_btu)
+            
         })
         .catch(err => console.log(err))
 
@@ -52,6 +58,21 @@ export default function Editcheckstatus() {
             }
         })
     }
+
+    //email
+    const notifyEmail = async () => {
+        const message = `เลขใบสั่งซื้อ: ${purchase_id}\nสถานะการชำระเงิน: ${payment_status}\nยอดชำระเงิน: ${payment_amount}\nสินค้า: ${product_name}\nจำนวน: ${quantity}\nBTU: ${product_btu}`;
+        try {
+            await axios.post(
+                'http://localhost:3001/notifyEmail',
+                { email, message },
+           
+            );
+            console.log('Email notification sent successfully');
+        } catch (error) {
+            console.error('Error sending email notification:', error);
+        }
+    };
     return (
         <div>
             <div class="container mt-5">
@@ -91,22 +112,15 @@ export default function Editcheckstatus() {
                         <label for="title-name" class="form-label">หลักฐานการชำระเงิน:</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                    <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">
+                    บันทึก
+                    </Button>
+                    <Button onClick={notifyEmail} color="red" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">
+                    แจ้งเตือน Email
+                    </Button>
                 </form>
             </div>
-            <div>  
-                            {/* เแสดง dropdown status 
-                    <select required onChange={(event) => { setpayment_status(event.target.value) }}>
-                    <option value="">Select status</option>
-                    {paymentStatus.map((type, index) => (
-                    <option key={index} value={type.payment_status}>{type.payment_status}</option>
-                        ))}
-                    </select>  */}
-
-                    </div> 
-
-
-
+         
         </div>
     )
 }
