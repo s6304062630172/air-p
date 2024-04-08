@@ -25,13 +25,15 @@ const Cart = () => {
   });
   const [address, setAddress] = useState('')
   useEffect(() => {
-    axios.get(`http://localhost:3001/editaddress/${email}`)
+    axios.get(`http://localhost:3001/userCalendar/${email}`)
         .then(res => {
             setAddress(res.data[0].address)
            
         })
         .catch(err => console.log(err))
 }, [])
+
+
 
   const onLoadData = async () => {
 

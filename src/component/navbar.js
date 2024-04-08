@@ -4,11 +4,20 @@ import { Outlet, Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [statusNavbar, setStatusNavbar] = useState(false);
-
+  const username = localStorage.getItem('username')
   const toggleNavbar = () => {
     setStatusNavbar(!statusNavbar);
   };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem("productCart");
+    localStorage.setItem('userinfo',"");
+    window.location = '/login';
 
+
+  }
   const onChangePage = (path) => {
     setStatusNavbar(!statusNavbar);
     if (path === "home") {
@@ -98,7 +107,7 @@ const Navbar = () => {
                   </button>
                   <button
                     className="flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1"
-                    // onClick={() => onChangePage("home")}
+                  // onClick={() => onChangePage("home")}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -114,25 +123,25 @@ const Navbar = () => {
                   </button>
                   <button
                     className="flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1"
-                    // onClick={() => onChangePage("cart")}
+                  // onClick={() => onChangePage("cart")}
                   >
                     <div className="flex items-center space-x-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-clipboard-check"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"
-                      />
-                      <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
-                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
-                    </svg>
-                    <span>ตรวจสอบสถานะการติดตั้ง</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="bi bi-clipboard-check"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"
+                        />
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
+                      </svg>
+                      <span>ตรวจสอบสถานะการติดตั้ง</span>
                     </div>
                   </button>
                 </div>
@@ -141,15 +150,17 @@ const Navbar = () => {
             <div className="hidden md:block">
               <div className="dropdown dropdown-end flex items-center">
                 <div>
+
                   <div className="flex items-center mr-1">
+                    <button onClick={handleLogout} className="flex items-center text-md text-white btn btn hover:text-blue ">
+                      logout
+                    </button>
                     <span className="flex items-center text-md text-white">
-                      username
+                      {username}
                     </span>
                   </div>
                   <div className="flex items-center mr-1 justify-end">
-                    <span className="flex items-center text-md text-sm text-white">
-                      userRole
-                    </span>
+
                   </div>
                 </div>
                 <div
@@ -218,7 +229,7 @@ const Navbar = () => {
               <div>
                 <button
                   className="w-full flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1 "
-                  // onClick={() => onChangePage("home")}
+                // onClick={() => onChangePage("home")}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +247,7 @@ const Navbar = () => {
               <div>
                 <button
                   className="w-full flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1 "
-                  // onClick={() => onChangePage("cart")}
+                // onClick={() => onChangePage("cart")}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

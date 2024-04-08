@@ -7,6 +7,7 @@ import Modal from "./modal/modal";
 import { onBuyProduct, onGetProductCart } from "../../helpers/storage";
 import { Badge } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 const Home = () => {
   const [productList, setProductList] = useState([]);
   const [productListOriginal, setProductListOriginal] = useState([]);
@@ -14,6 +15,9 @@ const Home = () => {
   const [statusModal, setStatusModal] = useState(false);
   const [type, setType] = useState([]);
   const [itemCart, setItemCart] = useState(0);
+  const [userinfo, setUserinfo] = useState([]);
+  const username = localStorage.getItem("username"); // แทนที่ด้วยชื่อผู้ใช้ที่ต้องการดึงข้อมูล
+
 
   const onLoadData = async () => {
     const result = await _apiProduct.getProduct();
@@ -21,7 +25,23 @@ const Home = () => {
     setProductList(result);
     setProductListOriginal(result);
     setType(resultType);
+
+
   };
+  const getUser = () => {
+    if (username) { // ตรวจสอบว่ามี username ใน LocalStorage หรือไม่
+      axios.get(`http://localhost:3001/userInfo/${username}`)
+        .then(res => {
+          setUserinfo(res.data[0])
+
+        })
+        .catch(err => console.log(err));
+    }
+
+  }
+
+
+
 
   const onShowModal = (product) => {
     setProductClick(product);
@@ -40,10 +60,10 @@ const Home = () => {
     const productCart = onGetProductCart();
     if (productCart === null) {
       onBuyProduct([formData]);
-    } else {
-      const setData = [...productCart, formData];
+    } else { //ถ้ามีสินค้าอยู่แล้ว
+      const setData = [...productCart, formData]; //ให้เพิ่มข้อมูลใน productCart ด้วย formdata
       setItemCart(setData?.length || 0);
-      onBuyProduct(setData);
+      onBuyProduct(setData); //เพิ่มสินค้าลง localstorage
     }
     setStatusModal(false);
     document.getElementById("modal").close();
@@ -71,11 +91,18 @@ const Home = () => {
     }
   };
 
+
+
   useEffect(() => {
     onLoadData();
     const productCart = onGetProductCart();
     setItemCart(productCart?.length || 0);
   }, []);
+  useEffect(() => {
+    getUser();
+    localStorage.setItem("userinfo", JSON.stringify(userinfo));
+  }, [userinfo]);
+
 
   return (
     <>

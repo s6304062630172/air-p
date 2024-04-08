@@ -42,11 +42,11 @@ export default function Checkstatus() {
                 <thead>
                     <tr>
                         <th>เลขใบสั่งซื้อ</th>
-                        <th>email</th>
+                        <th>username</th>
                         <th>total</th>
                         <th>type</th>
                         <th>สถานะการชำระเงิน</th>
-                        <th>สถานะงาน</th>
+                        {/* <th>สถานะงาน</th> */}
                     </tr>
                 </thead>
                 <tbody>
@@ -55,11 +55,11 @@ export default function Checkstatus() {
                         return (
                             <tr>
                                 <td>{val.purchase_id}</td>
-                                <td>{val.email}</td>
+                                <td>{val.username}</td>
                                 <td>{val.payment_amount}</td>
                                 <td>{val.pay_type}</td>
                                 <td>{val.payment_status}</td>
-                                <td>{val.work_status}</td>
+                                {/* <td>{val.work_status}</td> */}
                                 <Link to={`/Editcheckstatus/${val.purchase_id}`} className="btn btn-dark">
     <svg class="h-6 w-6 text-slate-500" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" />

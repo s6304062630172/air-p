@@ -2,45 +2,61 @@ import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from "@material-tailwind/react";
+
 export default function Editworkstatus() {
     const { purchase_id } = useParams();
     const [work_status, setWorkStatus] = useState('');
     const [team_number, setTeamNumber] = useState('');
-    const [email, setemail] = useState('');
+    const [username, setUsername] = useState('');
+    const [address, setAddress] = useState('');
+    const [type, setType] = useState('');
+    const [detail, setDetail] = useState('');
+    const [teams, setTeams] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         Axios.get(`http://localhost:3001/Editworkstatus/${purchase_id}`)
             .then(res => {
-                setWorkStatus(res.data[0].work_status);
-                setTeamNumber(res.data[0].team_number);
-                setemail(res.data[0].email);
+                const data = res.data[0];
+                setWorkStatus(data.work_status);
+                setTeamNumber(data.team_number);
+                setUsername(data.username);
+                setAddress(data.address);
+                setType(data.type);
+                setDetail(data.detail);
+            })
+            .catch(err => console.log(err));
+
+        // Fetch teams from database
+        Axios.get('http://localhost:3001/teams')
+            .then(res => {
+                setTeams(res.data);
             })
             .catch(err => console.log(err));
     }, [purchase_id]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`http://localhost:3001/updateworkstatus/${purchase_id}`, { work_status, team_number,email })
+        Axios.put(`http://localhost:3001/updateworkstatus/${purchase_id}`, { work_status, team_number, detail })
             .then(({ data }) => {
                 if (data.updated) {
-                    navigate('/workstatus');
+                    navigate(`/Editworkstatus/${purchase_id}`);
                 } else {
                     alert('Not updated');
                 }
             })
             .catch(error => console.error('Error updating work status:', error));
     };
-//Line
+
     const notifyLine = async () => {
-        const message = `\nสถานะงาน: ${work_status}\nทีม: ${team_number}\nงานที่: ${purchase_id}\nemail: ${email}`;
+        const message = `\nงานที่: ${purchase_id}\nประเภทงาน: ${type}\nสถานะงาน: ${work_status}\nทีม: ${team_number}\nลูกค้า: ${username}\nที่อยู่: ${address}`;
         try {
             await Axios.post(
-                'http://localhost:3001/notify', // แก้ URL เป็น '/notify' เพื่อเรียกใช้ไฟล์ Notify.js
+                'http://localhost:3001/notify',
                 { message },
                 {
                     headers: {
-                        'Content-Type': 'application/json', // แก้ Content-Type เป็น application/json
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer qTTR3oIOBQVR2BLrbjGoiyEE2IjJO5o0wY8fXKq3Wqm`
                     }
                 }
@@ -53,13 +69,24 @@ export default function Editworkstatus() {
 
     return (
         <div className="container mt-5">
-            <h3>ตรวจสอบการดำเนินงาน</h3>
+            <div className="flex justify-between items-center mb-3">
+                <h3>ตรวจสอบการดำเนินงาน</h3>
+                <Button onClick={() => navigate('/workstatus')} color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">Back</Button>
+            </div>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
+                    <div className="mb-3">
+                        <label htmlFor="title-name" className="form-label">เลขใบสั่งซื้อ:</label>
+                        <span>{purchase_id}</span>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="title-name" className="form-label">ประเภทงาน:</label>
+                        <span>{type}</span>
+                    </div>
                     <div>
                         <label htmlFor="title-name" className="form-label">สถานะงาน</label>
                         <select onChange={(event) => setWorkStatus(event.target.value)}>
-                            <option selected value="">เปลี่ยนสถานะ</option>
+                            <option disabled selected value="">เปลี่ยนสถานะ</option>
                             <option value="ดำเนินงาน">ดำเนินงาน</option>
                             <option value="สำเร็จ">สำเร็จ</option>
                         </select>
@@ -67,28 +94,29 @@ export default function Editworkstatus() {
                     <div>
                         <label htmlFor="title-name" className="form-label">ทีม</label>
                         <select onChange={(event) => setTeamNumber(event.target.value)}>
-                            <option selected value="">เลือกทีม</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
+                            <option disabled selected value="">เลือกทีม</option>
+                            {teams.map(team => (
+                                <option key={team.team_id} value={team.team_number}>{team.team_number}</option>
+                            ))}
                         </select>
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="title-name" className="form-label">เลขใบสั่งซื้อ:</label>
-                        <span>{purchase_id}</span>
+                        <label htmlFor="title-name" className="form-label">Username:</label>
+                        <span>{username}</span>
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="title-name" className="form-label">Email:</label>
-                        <span>{email}</span>
+                        <label htmlFor="detail" className="form-label">หมายเหตุ:</label>
+                        <input type="text" className="form-control" id="detail" name="detail" value={detail} onChange={(event) => setDetail(event.target.value)} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="title-name" className="form-label">ที่อยู่:</label>
+                        <span>{address}</span>
                     </div>
                     <div>
-        
-                    <Button onClick={notifyLine} color="green" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">
-                    แจ้งเตือน Line
-                    </Button>
+                        <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">บันทึก</Button>
+                        <Button onClick={notifyLine} color="green" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">แจ้งเตือน Line</Button>
+                    </div>
                 </div>
-                </div>
-                <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">บันทึก</Button>
             </form>
         </div>
     );

@@ -30,6 +30,8 @@ export default function Workstatus() {
                 <thead>
                     <tr>
                         <th>เลขใบสั่งซื้อ</th>
+                        <th>username</th>
+                        <th>ประเภทงาน</th>
                         <th>สถานะงาน</th>
                         <th>ทีม</th>
                     </tr>
@@ -38,6 +40,8 @@ export default function Workstatus() {
                     {workStatusList.map((item, index) => (
                         <tr key={index}>
                             <td>{item.purchase_id}</td>
+                            <td>{item.username}</td>
+                            <td>{item.type}</td>
                             <td>{item.work_status}</td>
                             <td>{item.team_number}</td>
                                       

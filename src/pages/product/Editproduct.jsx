@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { event } from 'jquery';
+
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 
 export default function Editproduct() {
-    
+
     const { product_id } = useParams();
     const [product_name, setproduct_name] = useState('')
     const [product_type_id, setproduct_type_id] = useState('')
@@ -13,6 +13,7 @@ export default function Editproduct() {
     const [product_price, setproduct_price] = useState('')
     const [product_quantity, setproduct_quantity] = useState('')
     const [product_btu, setproduct_btu] = useState('')
+    const [product_img, setproduct_img] = useState('')
     useEffect(() => {
         axios.get(`http://localhost:3001/Editproduct/${product_id}`)
             .then(res => {
@@ -22,13 +23,9 @@ export default function Editproduct() {
                 setproduct_price(res.data[0].product_price)
                 setproduct_quantity(res.data[0].product_quantity)
                 setproduct_btu(res.data[0].product_btu)
+                setproduct_img(res.data[0].product_img)
             })
             .catch(err => console.log(err))
-
-
-
-
-
     }, [])
     const navigate = useNavigate();
     const select_type = product_type_id
@@ -36,9 +33,9 @@ export default function Editproduct() {
 
     const hanldeSubmit = (event) => {
         event.preventDefault();
-        
-        axios.put(`http://localhost:3001/update/${product_id}`, { product_name, product_type_id , product_brand_id, product_price,product_quantity, product_btu})
-            
+
+        axios.put(`http://localhost:3001/update/${product_id}`, { product_name, product_type_id, product_brand_id, product_price, product_quantity, product_btu })
+
             .then(res => {
                 if (res.data.updated) {
                     navigate('/product')
@@ -58,15 +55,22 @@ export default function Editproduct() {
 
                 <form onSubmit={hanldeSubmit}>
                     <div class="mb-3">
+                        <img
+                            src={product_img}
+                            alt="ui/ux review check"
+                            style={{ width: '150px', height: '100px' }} // กำหนดขนาดรูปภาพเป็น 100x100 พิกเซล
+                        />
                         <label for="product-name" class="form-label">ชื่อสินค้า</label>
+
+
                         <input type="text" class="form-control" id="product-name" name="name" value={product_name}
                             onChange={(event) => { setproduct_name(event.target.value) }} />
                     </div>
                     <div class="mb-3">
                         <label for="product-name" class="form-label">ประเภทสินค้า</label>
-                        
+
                         <select onChange={(event) => { setproduct_type_id(event.target.value) }} >
-                            
+
                             <option value="A1" selected={select_type === 'A1'}>แอร์ติดผนัง</option>
                             <option value="A2" selected={select_type === 'A2'}>แอร์แขวน</option>
                             <option value="A3" selected={select_type === 'A3'}>สี่ทิศทาง</option>
@@ -74,18 +78,18 @@ export default function Editproduct() {
                         </select >
                     </div>
                     <div class="mb-3">
-                    <label for="product-name" class="form-label">ยี่ห้อสินค้า</label>
-                    <select  onChange={(event) => { setproduct_brand_id(event.target.value) }}>
-                
-                                <option value={"1"} selected={select_brand === '1'} >Daikin</option>
-                                <option value={"2"} selected={select_brand === '2'}>Carrier</option>
-                                <option value={"3"} selected={select_brand === '3'}>Panasonic</option>
-                                <option value={"4"} selected={select_brand === '4'}>Fujitsu</option>
-                                <option value={"5"} selected={select_brand === '5'}>LG</option>
-                                <option value={"6"} selected={select_brand === '6'}>Samsung</option>
-                                <option value={"7"} selected={select_brand === '7'}>Sharp</option>
-                                <option value={"8"} selected={select_brand === '8'}>Hitachi</option>
-                            </select>
+                        <label for="product-name" class="form-label">ยี่ห้อสินค้า</label>
+                        <select onChange={(event) => { setproduct_brand_id(event.target.value) }}>
+
+                            <option value={"1"} selected={select_brand === '1'} >Daikin</option>
+                            <option value={"2"} selected={select_brand === '2'}>Carrier</option>
+                            <option value={"3"} selected={select_brand === '3'}>Panasonic</option>
+                            <option value={"4"} selected={select_brand === '4'}>Fujitsu</option>
+                            <option value={"5"} selected={select_brand === '5'}>LG</option>
+                            <option value={"6"} selected={select_brand === '6'}>Samsung</option>
+                            <option value={"7"} selected={select_brand === '7'}>Sharp</option>
+                            <option value={"8"} selected={select_brand === '8'}>Hitachi</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="product-name" class="form-label">ราคาสินค้า</label>
@@ -115,7 +119,7 @@ export default function Editproduct() {
                         <label for="product-image" class="form-label">รูปภาพสินค้า</label>
                         <input type="file" class="form-control" id="product-image" name="image" />
                     </div> */}
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">บันทึก</button>
                 </form>
             </div>
 

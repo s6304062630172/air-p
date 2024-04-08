@@ -1,0 +1,10 @@
+#item:hover {
+  background-color: rgb(29, 89, 158);
+  padding: 15px;
+  color: white;
+}
+#item{
+    padding: 15px;
+    border-radius: 15px;
+    background-color: rgb(63, 118, 189);
+}

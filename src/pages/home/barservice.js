@@ -1,5 +1,4 @@
 import { Typography, Select, Option } from "@material-tailwind/react";
-import { Link } from 'react-router-dom';
 const options = ["One", "Two", "Three", "Four", "Five", "Six"];
 const Barservice = ({ type, onSelectType, searchName }) => {
   return (
@@ -20,12 +19,12 @@ const Barservice = ({ type, onSelectType, searchName }) => {
         >
           จองคิวซ่อม
         </a>
-        <Link
-  to="/userquotation"
-  className="rounded-full bg-gray-300 px-3 py-1 flex items-center font-bold text-gray-900 mr-2"
->
-  ใบเสนอราคา
-</Link>
+        <a
+          href="#"
+          className="rounded-full bg-gray-300 px-3 py-1 flex items-center font-bold text-gray-900 mr-2"
+        >
+          ใบกำกับภาษี
+        </a>
         <div className="flex justify-end mx-5 md:ml-auto">
           <input
             onChange={searchName}
