@@ -81,14 +81,18 @@ h3
     height: auto; 
     margin-bottom: 6%;
   }
-
-  table.detail {
-    border-collapse: collapse;
-    width: 100%; /* หรือคุณสามารถกำหนดขนาดตามที่ต้องการ */
+  .detail {
+    border-collapse: collapse; /* รวมเส้นขอบของเซลล์ */
+    width: 90%; /* กำหนดความกว้างของตาราง */
+    margin: auto; /* กำหนดให้ตารางอยู่กลางหน้าเว็บ */
   }
   
-  table.detail th,
-  table.detail td {
-    border: 1px solid black; /* กำหนดเส้นขอบ */
-    padding: 8px; /* กำหนดระยะห่างภายในเซลล์ */
+  .detail th, .detail td {
+    border: 1px solid #ddd; /* เส้นขอบของเซลล์ */
+    padding: 8px; /* ระยะห่างของข้อความจากขอบของเซลล์ */
+    text-align: center; /* จัดเนื้อหาข้อความในเซลล์ชิดซ้าย */
+  }
+  
+  .detail th {
+    background-color: #f2f2f2; /* สีพื้นหลังของส่วนหัวตาราง */
   }

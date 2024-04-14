@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { event } from 'jquery';
+// import { event } from 'jquery';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
+import { Button } from "@material-tailwind/react";
 
 export default function Editquotation() {
     
@@ -16,6 +16,8 @@ export default function Editquotation() {
     const [id_tax_user, setid_tax_user] = useState('');
     const [id_tax_admin, setid_tax_admin] = useState('');
     const [email, setemail] = useState('');
+    const [total_vat, settotal_vat] = useState('');
+    const [vat, setvat] = useState('');
     useEffect(()=>{
         axios.get(`http://localhost:3001/Editquotation/${no_quotation}`)
         .then(res => {
@@ -28,6 +30,8 @@ export default function Editquotation() {
             setid_tax_user(res.data[0].id_tax_user)
             setid_tax_admin(res.data[0].id_tax_admin)
             setemail(res.data[0].email)
+            settotal_vat(res.data[0].total_vat)
+            setvat(res.data[0].vat)
         })
         .catch(err => console.log(err))
 
@@ -37,7 +41,7 @@ export default function Editquotation() {
     const hanldeSubmit = (event) => {
         event.preventDefault();
         
-        axios.put(`http://localhost:3001/updatequ/${no_quotation}` , { title_quotation,phone_admin,address_user,phone_user,date_,annotation,id_tax_user,id_tax_admin,email }) 
+        axios.put(`http://localhost:3001/updatequ/${no_quotation}` , { title_quotation,phone_admin,address_user,phone_user,date_,annotation,id_tax_user,id_tax_admin,email,total_vat,vat }) 
         .then(res=>{
             if(res.data.updated){
                 navigate('/quotation')
@@ -47,15 +51,17 @@ export default function Editquotation() {
             }
         })
     }
-
     return (
-        <div>
-
-
+       
             <div class="container mt-5">
+                 <div className="flex justify-between items-center mb-3">
                 <h1>แก้ไขใบเสนอราคา</h1>
-
+                <Button onClick={() => navigate('/Quotation')} color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">Back</Button>
+                </div >
                 <form onSubmit={hanldeSubmit}>
+                    <div class="mb-3">
+                <p>เลขที่ใบเสนอราคา: {no_quotation}</p> 
+                </div>
                     <div class="mb-3">
                         <label for="title-name" class="form-label">ชื่อหัวข้อ</label>
                         <input type="text" class="form-control" id="title-name" name="name" value={title_quotation} 
@@ -101,13 +107,23 @@ export default function Editquotation() {
                         <input type="text" class="form-control" id="Annotation" name="name" value={annotation} 
                         onChange={(event) => { setannotation(event.target.value) }} />
                     </div>
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                    <div class="mb-3">
+                        <label for="vat" class="form-label">จำนวนภาษีมูลค่าเพิ่ม 7%</label>
+                        <input type="text" class="form-control" id="vat" name="name" value={vat} 
+                        onChange={(event) => { setvat(event.target.value) }} />
+                    </div>
+                    <div class="mb-3">
+                        <label for="total_vat" class="form-label">ราคารวมมูลค่าภาษี</label>
+                        <input type="text" class="form-control" id="total_vat" name="name" value={total_vat} 
+                        onChange={(event) => { settotal_vat(event.target.value) }} />
+                    </div>
+                    <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">บันทึก</Button>
                 </form>
             </div>
 
 
 
 
-        </div>
+       
     )
 }

@@ -186,40 +186,7 @@ app.put('/updateAddress/:email', (req, res) => {
     return res.json({ updated: true })
   })
 })
-////////////////Quatation////////////////
-app.get('/get/quotation', (req, res) => {
-  db.query("SELECT * FROM quotation", (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  });
-});
-app.post("/post/create", (req, res) => {
-  const title_quotation = req.body.title_quotation;
-  const date_ = req.body.date_;
-  const id_tax_user = req.body.id_tax_user;
-  const id_tax_admin = req.body.id_tax_admin;
-  const annotation = req.body.annotation;
-  const phone_admin = req.body.phone_admin;
-  const phone_user = req.body.phone_user;
-  const address_user = req.body.address_user;
-  const email = req.body.email;
-  const quotation_product_type = req.body.quotation_product_type;
-  const quotation_product_brand = req.body.quotation_product_brand;
-  db.query(
-    "INSERT INTO quotation (title_quotation,date_,id_tax_user,id_tax_admin,annotation,phone_admin,phone_user,address_user,email,quotation_product_type,quotation_product_brand) VALUES(?,?,?,?,?,?,?,?,?,?.?) ",
-    [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email, quotation_product_type, quotation_product_brand],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("Values Inserted");
-      }
-    }
-  );
-});
+
 //  // API Endpoint เพื่อดึงข้อมูล product_brands จากตาราง product
 // app.get('/product_brand', (req, res) => {
 //   const sql = 'SELECT DISTINCT product_brand_name FROM product_brand'; // Query SQL สำหรับดึงข้อมูล product_brands
@@ -245,35 +212,7 @@ app.post("/post/create", (req, res) => {
 //   });
 // });
 
-app.delete('/delete/quotation/:no_quotation', (req, res) => {
-  const no_quotation = req.params.no_quotation;
-  db.query("DELETE FROM quotation WHERE no_quotation = ?", no_quotation, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  })
-})
-//Edit
-app.get('/editquotation/:no_quotation', (req, res) => {
-  const no_quotation = req.params.no_quotation
-  db.query("SELECT * FROM quotation WHERE no_quotation = ?", no_quotation, (err, result) => {
-    if (err) {
-      console.log(err)
-    } else {
-      res.send(result)
-    }
-  })
-})
-app.put('/updatequ/:no_quotation', (req, res) => {
-  const sql = "UPDATE quotation SET title_quotation = ? , date_ = ?,id_tax_user = ?,id_tax_admin = ?,annotation = ?,phone_admin = ?,phone_user = ?,address_user = ?,email = ? WHERE no_quotation =?"
-  const no_quotation = req.params.no_quotation;
-  db.query(sql, [req.body.title_quotation, req.body.date_, req.body.id_tax_user, req.body.phone_admin, req.body.annotation, req.body.phone_admin, req.body.phone_user, req.body.address_user, req.body.email, no_quotation], (err, result) => {
-    if (err) return res.json("error")
-    return res.json({ updated: true })
-  })
-})
+
 ////////////////Quatation////////////////
 app.get('/get/quotation', (req, res) => {
   db.query("SELECT * FROM quotation", (err, result) => {
@@ -284,59 +223,147 @@ app.get('/get/quotation', (req, res) => {
     }
   });
 });
-app.post("/post/create", (req, res) => {
-  const title_quotation = req.body.title_quotation;
-  const date_ = req.body.date_;
-  const id_tax_user = req.body.id_tax_user;
-  const id_tax_admin = req.body.id_tax_admin;
-  const annotation = req.body.annotation;
-  const phone_admin = req.body.phone_admin;
-  const phone_user = req.body.phone_user;
-  const address_user = req.body.address_user;
-  const email = req.body.email;
-  const quotation_product_type = req.body.quotation_product_type;
-  const quotation_product_brand = req.body.quotation_product_brand;
-  db.query(
-    "INSERT INTO quotation (title_quotation,date_,id_tax_user,id_tax_admin,annotation,phone_admin,phone_user,address_user,email,quotation_product_type,quotation_product_brand) VALUES(?,?,?,?,?,?,?,?,?,?.?) ",
-    [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email, quotation_product_type, quotation_product_brand],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send("Values Inserted");
-      }
-    }
-  );
-});
-//  // API Endpoint เพื่อดึงข้อมูล product_brands จากตาราง product
-// app.get('/product_brand', (req, res) => {
-//   const sql = 'SELECT DISTINCT product_brand_name FROM product_brand'; // Query SQL สำหรับดึงข้อมูล product_brands
-//   db.query(sql, (error, results, fields) => { // ใช้ db.query แทน connection.query
-//     if (error) {
-//       console.error('Error fetching product brands:', error);
-//       res.status(500).send('Error fetching product brands');
-//       return;
-//     }
-//     res.json(results); // ส่งข้อมูล product_brands กลับไปยัง React ในรูปแบบ JSON
-//   });
-// });
+// app.post('/quotation/create', (req, res) => {
+//   const {
+//       title_quotation,
+//       date_,
+//       id_tax_user,
+//       id_tax_admin,
+//       annotation,
+//       phone_admin,
+//       phone_user,
+//       address_user,
+//       email,
+//       product_id,
+//       price,
+//       quantity
+//   } = req.body;
 
-// app.get('/product_type', (req, res) => {
-//   const sql = 'SELECT DISTINCT product_type_name FROM product_type'; 
-//   db.query(sql, (error, results, fields) => { 
-//     if (error) {
-//       console.error('Error fetching product types:', error);
-//       res.status(500).send('Error fetching product types');
-//       return;
-//     }
-//     res.json(results); 
+//   // Start a database transaction
+//   db.beginTransaction((err) => {
+//       if (err) {
+//           throw err;
+//       }
+
+//       // Insert ใบเสนอ
+//       db.query('INSERT INTO quotation (title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+//           [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email],
+//           (err, result) => {
+//               if (err) {
+//                   return db.rollback(() => {
+//                       console.error(err);
+//                       res.status(500).send('Error occurred, transaction rolled back');
+//                   });
+//               }
+
+//               // Get the ID of the inserted quotation
+//               const quotationId = result.insertId;
+
+//               // Insert into 'cartquo' table
+//               db.query('INSERT INTO cartquo (no_quotation, product_id, price, quantity) VALUES (?, ?, ?, ?)',
+//                   [quotationId, product_id, price, quantity],
+//                   (err, result) => {
+//                       if (err) {
+//                           return db.rollback(() => {
+//                               console.error(err);
+//                               res.status(500).send('Error occurred, transaction rolled back');
+//                           });
+//                       }
+
+//                       // Commit the transaction
+//                       db.commit((err) => {
+//                           if (err) {
+//                               return db.rollback(() => {
+//                                   console.error(err);
+//                                   res.status(500).send('Error occurred, transaction rolled back');
+//                               });
+//                           }
+
+//                           // Send a success response
+//                           res.send('Quotation and Cartquo values inserted successfully');
+//                       });
+//                   });
+//           });
 //   });
 // });
+app.post('/quotation/create', (req, res) => {
+  const {
+      title_quotation,
+      date_,
+      id_tax_user,
+      id_tax_admin,
+      annotation,
+      phone_admin,
+      phone_user,
+      address_user,
+      email,
+      total_vat,
+      vat,
+      products
+  } = req.body;
+
+  // Start a database transaction
+  db.beginTransaction((err) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: "Failed to start transaction" });
+      }
+
+      // Insert quotation record
+      db.query('INSERT INTO quotation (title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,total_vat,vat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,total_vat,vat],
+          (err, result) => {
+              if (err) {
+                  return db.rollback(() => {
+                      console.error(err);
+                      res.status(500).json({ error: "Failed to insert quotation record" });
+                  });
+              }
+
+              const quotationId = result.insertId;
+
+              // Insert products into cartquo table
+              const values = products.map(product => [quotationId, product.product_id, product.price, product.quantity]);
+              db.query('INSERT INTO cartquo (no_quotation, product_id, price, quantity) VALUES ?', [values], (err, result) => {
+                  if (err) {
+                      return db.rollback(() => {
+                          console.error(err);
+                          res.status(500).json({ error: "Failed to insert products into cartquo table" });
+                      });
+                  }
+
+                  // Commit the transaction
+                  db.commit((err) => {
+                      if (err) {
+                          return db.rollback(() => {
+                              console.error(err);
+                              res.status(500).json({ error: "Failed to commit transaction" });
+                          });
+                      }
+
+                      res.status(200).json({ message: "Quotation and products inserted successfully" });
+                  });
+              });
+          });
+  });
+});
+
+//drop down product_id
+app.get('/selectproduct', (req, res) => {
+  db.query("SELECT * FROM product", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 
 // แสดงรายละเอียดสินค้าในใบเสนอราคา
 app.get('/quotation_detail/:no_quotation', (req, res) => {
   const no_quotation = req.params.no_quotation;
-  const sql = 'SELECT quotation.*, product.product_name, product.product_price, product.product_btu FROM quotation JOIN product ON quotation.product_id = product.product_id WHERE quotation.no_quotation = ?';
+  const sql = 'SELECT cartquo.product_id, product.product_name, product.product_btu, cartquo.quantity, cartquo.price FROM cartquo JOIN product ON cartquo.product_id = product.product_id WHERE cartquo.no_quotation = ?';
   db.query(sql, [no_quotation], (error, results, fields) => {
     if (error) {
       console.error('Error fetching product:', error);
@@ -349,14 +376,47 @@ app.get('/quotation_detail/:no_quotation', (req, res) => {
 //ลบ
 app.delete('/delete/quotation/:no_quotation', (req, res) => {
   const no_quotation = req.params.no_quotation;
-  db.query("DELETE FROM quotation WHERE no_quotation = ?", no_quotation, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  })
-})
+
+  // Start a database transaction
+  db.beginTransaction((err) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).json({ error: "Failed to start transaction" });
+      }
+
+      // Delete from cartquo table
+      db.query('DELETE FROM cartquo WHERE no_quotation = ?', [no_quotation], (err, result) => {
+          if (err) {
+              return db.rollback(() => {
+                  console.error(err);
+                  res.status(500).json({ error: "Failed to delete products from cartquo table" });
+              });
+          }
+
+          // Delete from quotation table
+          db.query('DELETE FROM quotation WHERE no_quotation = ?', [no_quotation], (err, result) => {
+              if (err) {
+                  return db.rollback(() => {
+                      console.error(err);
+                      res.status(500).json({ error: "Failed to delete quotation record" });
+                  });
+              }
+
+              // Commit the transaction
+              db.commit((err) => {
+                  if (err) {
+                      return db.rollback(() => {
+                          console.error(err);
+                          res.status(500).json({ error: "Failed to commit transaction" });
+                      });
+                  }
+
+                  res.status(200).json({ message: "Quotation and related products deleted successfully" });
+              });
+          });
+      });
+  });
+});
 //Edit
 app.get('/editquotation/:no_quotation', (req, res) => {
   const no_quotation = req.params.no_quotation
@@ -369,9 +429,9 @@ app.get('/editquotation/:no_quotation', (req, res) => {
   })
 })
 app.put('/updatequ/:no_quotation', (req, res) => {
-  const sql = "UPDATE quotation SET title_quotation = ? , date_ = ?,id_tax_user = ?,id_tax_admin = ?,annotation = ?,phone_admin = ?,phone_user = ?,address_user = ?,email = ? WHERE no_quotation =?"
+  const sql = "UPDATE quotation SET title_quotation = ? , date_ = ?,id_tax_user = ?,id_tax_admin = ?,annotation = ?,phone_admin = ?,phone_user = ?,address_user = ?,email = ?,total_vat = ?,vat = ? WHERE no_quotation =?"
   const no_quotation = req.params.no_quotation;
-  db.query(sql, [req.body.title_quotation, req.body.date_, req.body.id_tax_user, req.body.phone_admin, req.body.annotation, req.body.phone_admin, req.body.phone_user, req.body.address_user, req.body.email, no_quotation], (err, result) => {
+  db.query(sql, [req.body.title_quotation, req.body.date_, req.body.id_tax_user, req.body.phone_admin, req.body.annotation, req.body.phone_admin, req.body.phone_user, req.body.address_user, req.body.email, req.body.total_vat, req.body.vat, no_quotation], (err, result) => {
     if (err) return res.json("error")
     return res.json({ updated: true })
   })
