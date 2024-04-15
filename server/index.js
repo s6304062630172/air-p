@@ -837,6 +837,124 @@ app.post('/notifyEmail', (req, res) => {
       }
   });
 });
+
+///////////////dashboard///////////////////////
+//แสดงแบรนด์ขายดี
+app.get('/dashboard', (req, res) => {
+  db.query(`
+      SELECT
+          p.product_id,
+          p.product_name,
+          pb.product_brand_name,
+          pb.brand_img,
+          SUM(o.quantity) AS total_sold
+      FROM
+          ordering o
+      JOIN
+          product p ON o.product_id = p.product_id
+      JOIN
+          product_brand pb ON p.product_brand_id = pb.product_brand_id
+      GROUP BY
+          o.product_id
+      ORDER BY
+          total_sold DESC
+      LIMIT 3;
+  `, (err, result) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+          return;
+      }
+      res.json(result);
+  });
+});
+//ยอดขายรายสัปดาห์
+app.get('/api/weekly-sales', (req, res) => {
+  db.query(`
+      SELECT
+          DAYNAME(p.date) AS day_name,
+          SUM(o.quantity) AS total_sold
+      FROM
+          purchase p
+      JOIN
+          ordering o ON p.purchase_id = o.purchase_id
+      WHERE
+          WEEK(p.date) = WEEK(CURDATE()) AND YEAR(p.date) = YEAR(CURDATE())
+      GROUP BY
+          DAYNAME(p.date)
+      ORDER BY
+          FIELD(day_name, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+  `, (err, result) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+          return;
+      }
+      res.json(result);
+  });
+});
+// app.get('/api/weekly-sales', (req, res) => {
+//   const { week } = req.query;
+//   let weekQuery = week ? parseInt(week) : null;
+
+//   if (!weekQuery || isNaN(weekQuery) || weekQuery < 1 || weekQuery > 52) {
+//       res.status(400).json({ message: 'Invalid week number' });
+//       return;
+//   }
+
+//   const weekStartDate = getWeekStartDate(weekQuery);
+//   const weekEndDate = new Date(weekStartDate);
+//   weekEndDate.setDate(weekEndDate.getDate() + 6);
+
+//   db.query(`
+//       SELECT
+//           DAYNAME(p.date) AS day_name,
+//           SUM(o.quantity) AS total_sold
+//       FROM
+//           purchase p
+//       JOIN
+//           ordering o ON p.purchase_id = o.purchase_id
+//       WHERE
+//           p.date BETWEEN ? AND ?
+//       GROUP BY
+//           DAYNAME(p.date)
+//       ORDER BY
+//           FIELD(day_name, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+//   `, [weekStartDate, weekEndDate], (err, result) => {
+//       if (err) {
+//           console.error(err);
+//           res.status(500).json({ message: 'Internal server error' });
+//           return;
+//       }
+//       res.json(result);
+//   });
+// });
+
+//ยอดขายรายเดือน
+app.get('/api/monthly-sales', (req, res) => {
+  db.query(`
+      SELECT
+          MONTHNAME(p.date) AS month_name,
+          SUM(o.quantity) AS total_sold
+      FROM
+          purchase p
+      JOIN
+          ordering o ON p.purchase_id = o.purchase_id
+      WHERE
+          YEAR(p.date) = YEAR(CURDATE())
+      GROUP BY
+          MONTH(p.date)
+      ORDER BY
+          MONTH(p.date);
+  `, (err, result) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+          return;
+      }
+      res.json(result);
+  });
+});
 app.listen('3001', () => {
   console.log('server is running on port 3001');
 }) 

@@ -21,6 +21,7 @@ import Quotation from "./pages/quotation/Quotation";
 import Editemployee from "./pages/employee/Editemployee";
 import Editquotation from "./pages/quotation/Editquotation";
 import Viewfinish from "./pages/checkstatus/Viewfinish";
+import Dashboard from "./pages/dashboard/Dashboard";
 function App() {
   return (
     <div>
@@ -60,6 +61,7 @@ function App() {
           <Route path="/Editquotation/:no_quotation" element={<Editquotation />} />
           <Route path="/Editemployee/:employee_id" element={<Editemployee />} />
           <Route path="/Viewfinish/:purchase_id" element={<Viewfinish />} />
+          <Route path="/dashboard" element={<Dashboard />} /> 
 
         </Routes>
       </BrowserRouter>

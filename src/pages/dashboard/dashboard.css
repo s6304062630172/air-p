@@ -1,0 +1,26 @@
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px; /* Add gap between the two columns */
+    width: 70%;
+    margin: auto; /* กำหนดให้ตารางอยู่กลางหน้าเว็บ */
+}
+
+.dashboard-card {
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+.light-gray-bg {
+    background-color: #f1f1f1;
+}
+
+.light-blue-bg {
+    background-color: #d3eafd;
+    width: 70%;
+    margin: auto; /* กำหนดให้ตารางอยู่กลางหน้าเว็บ */
+}
