@@ -23,6 +23,7 @@ import Editquotation from "./pages/quotation/Editquotation";
 import Viewfinish from "./pages/checkstatus/Viewfinish";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Userquo from "./pages/userquo/Userquo";
+import Changebook from "./pages/checkstatus/Changebook";
 function App() {
   return (
     <div>
@@ -64,6 +65,7 @@ function App() {
           <Route path="/Viewfinish/:ordering_id" element={<Viewfinish />} />
           <Route path="/dashboard" element={<Dashboard />} /> 
           <Route path="/userquo" element={<Userquo />} /> 
+          <Route path="/Changebook/:ordering_id" element={<Changebook />} /> 
 
         </Routes>
       </BrowserRouter>

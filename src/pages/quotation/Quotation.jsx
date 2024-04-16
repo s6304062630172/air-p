@@ -172,7 +172,7 @@ export default function Quotation() {
         });
     };
 
-    
+ 
     return (
         <div>
             <h3>Quotation manage</h3>
@@ -187,9 +187,9 @@ export default function Quotation() {
                 <tbody>
                     {quotationList.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.no_quotation}</td>
-                            <td>{item.title_quotation}</td>
-                            <td>{item.date_}</td>
+                           <td>{item.no_quotation}</td>
+        <td>{item.title_quotation}</td>
+        <td>{new Date(item.date_).toLocaleDateString('en-GB')}</td>
                             <Link to={`/Editquotation/${item.no_quotation}`} className="btn btn-dark">
                                 <svg class="h-6 w-6 text-slate-500" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" />
@@ -312,7 +312,7 @@ export default function Quotation() {
                             <div className="block4">
                                 <p>เลขที่ใบเสนอราคา: {selectedQuotation.no_quotation}</p>
                                 <p>ชื่องาน: {selectedQuotation.title_quotation}</p>
-                                <p>วันที่: {selectedQuotation.date_}</p>
+                                <p>วันที่:{new Date(selectedQuotation.date_).toLocaleDateString('en-GB')}</p>
                                 <p>หมายเหตุ: {selectedQuotation.annotation}</p>
                             </div>
                         </div>

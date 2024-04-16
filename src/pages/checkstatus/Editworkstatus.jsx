@@ -28,14 +28,14 @@ export default function Editworkstatus() {
                 setemployee_name(data.employee_name.split(',').map(name => name.trim()));
             })
             .catch(err => console.log(err));
-    
+
         // Fetch teams from database
         Axios.get('http://localhost:3001/teams')
             .then(res => {
                 setTeams(res.data);
             })
             .catch(err => console.log(err));
-    
+
     }, [ordering_id]);
 
     const handleSubmit = (event) => {
@@ -104,11 +104,11 @@ export default function Editworkstatus() {
                         </select>
                     </div>
                     <div>
-    <label htmlFor="title-name" className="form-label">แสดงรายชื่อสมาชิกในทีม:</label>
-    {employee_name.map((name, index) => (
-        <span key={index}>{name} </span>
-    ))}
-</div>
+                        <label htmlFor="title-name" className="form-label">แสดงรายชื่อสมาชิกในทีม:</label>
+                        {employee_name.map((name, index) => (
+                            <span key={index}>{name} </span>
+                        ))}
+                    </div>
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">Username:</label>
                         <span>{username}</span>

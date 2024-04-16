@@ -718,8 +718,8 @@ app.get('/get/workstatus', (req, res) => {
 
 //edit work status
 app.get('/Editworkstatus/:ordering_id', (req, res) => {
-  const ordering_id = req.params.ordering_id; // เปลี่ยน purchase_id เป็น ordering_id
-  db.query("SELECT purchase.email, user.username, user.address, ordering.type ,ordering.detail, employee.employee_name FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id INNER JOIN employee ON ordering.team_number = employee.team_number WHERE ordering.ordering_id = ?", ordering_id, (err, result) => {
+  const ordering_id = req.params.ordering_id;
+  db.query("SELECT purchase.email, user.username, user.address, ordering.type, ordering.detail, ordering.date_book, ordering.timestart_book, ordering.timestop_book, employee.employee_name FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id INNER JOIN employee ON ordering.team_number = employee.team_number WHERE ordering.ordering_id = ?", ordering_id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -739,15 +739,46 @@ app.get('/teams', (req, res) => {
   });
 });
 
+//change booking
+app.put('/changebook/:ordering_id', (req, res) => {
+  const date_book = req.body.date_book;
+  const timestart_book = req.body.timestart_book;
+  const timestop_book = req.body.timestop_book;
+
+  const sql = "UPDATE ordering SET date_book=?, timestart_book=?, timestop_book=? WHERE ordering_id = ?";
+  const ordering_id = req.params.ordering_id;
+  db.query(sql, [date_book, timestart_book, timestop_book, ordering_id], (err, result) => {
+    if (err) return res.json("error")
+    return res.json({ updated: true })
+  });
+});
+app.get('/emailchange/:ordering_id', (req, res) => {
+  const ordering_id = req.params.ordering_id;
+  const sql = "SELECT ordering.*, purchase.email FROM ordering JOIN purchase ON ordering.purchase_id = purchase.purchase_id WHERE ordering.ordering_id = ?";
+  
+  db.query(sql, [ordering_id], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      return res.json({ error: "An error occurred" });
+    }
+    return res.json(result);
+  });
+});
+
+
+
 app.put('/updateworkstatus/:ordering_id', (req, res) => {
   const orderingId = req.params.ordering_id; // เปลี่ยน purchase_id เป็น ordering_id
   const workStatus = req.body.work_status;
   const teamNumber = req.body.team_number; // เพิ่มการรับค่า team_number
   const detail = req.body.detail;
+  const date_book = req.body.date_book;
+  const timestart_book = req.body.timestart_book;
+  const timestop_book = req.body.timestop_book;
   
 
-  const updateOrderingSql = "UPDATE ordering SET work_status = ?, team_number = ? , detail = ? WHERE ordering_id = ?";
-  db.query(updateOrderingSql, [workStatus, teamNumber, detail, orderingId], (err, result) => {
+  const updateOrderingSql = "UPDATE ordering SET work_status = ?, team_number = ? , detail = ?,date_book=?,timestart_book = ?,timestop_book=? WHERE ordering_id = ?";
+  db.query(updateOrderingSql, [workStatus, teamNumber, detail,date_book,timestart_book,timestop_book, orderingId], (err, result) => {
     if (err) {
       console.error("Error updating work_status and team_number in ordering table:", err);
       return res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตสถานะการทำงานและ team_number ในตาราง ordering" });

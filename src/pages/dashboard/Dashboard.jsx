@@ -8,7 +8,7 @@ const Dashboard = () => {
     const [topBrands, setTopBrands] = useState([]);
     const [chart, setChart] = useState(null);
     const [monthlySales, setMonthlySales] = useState([]);
-
+    const [brand_img, setbrand_img] = useState("");
     useEffect(() => {
         Promise.all([
             axios.get('http://localhost:3001/dashboard'),
@@ -16,6 +16,7 @@ const Dashboard = () => {
         ]).then(([topBrandsResponse, monthlySalesResponse]) => {
             setTopBrands(topBrandsResponse.data);
             setMonthlySales(monthlySalesResponse.data);
+            setbrand_img(topBrandsResponse.data);
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
@@ -124,6 +125,11 @@ const Dashboard = () => {
                 {topBrands.map((brand, index) => (
                     <li key={brand.product_brand_id}>
                         <strong>{index + 1}. {brand.product_brand_name}</strong>: {brand.total_sold} ตัว
+                        <img
+                                src={brand.brand_img} // ใช้ URL ของรูปภาพของแต่ละแบรนด์
+                                alt=""
+                                style={{ width: '300px', height: '200px' }} // กำหนดขนาดรูปภาพ
+                            />
                     </li>
                 ))}
             </ul>

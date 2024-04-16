@@ -76,11 +76,12 @@ export default function Editquotation() {
                     <input type="text" class="form-control" id="title-name" name="name" value={title_quotation}
                         onChange={(event) => { settitle_quotation(event.target.value) }} />
                 </div>
+              
                 <div class="mb-3">
-                    <label for="Date" class="form-label">วันที่</label>
-                    <input type="text" class="form-control" id="date" name="name" value={date_}
-                        onChange={(event) => { setdate_(event.target.value) }} />
-                </div>
+    <label for="Date" class="form-label">วันที่</label>
+    <input type="text" class="form-control" id="date" name="name" value={new Date(date_).toLocaleDateString('en-GB')}
+        onChange={(event) => { setdate_(event.target.value) }} />
+</div>
                 <div class="mb-3">
                     <label for="Address-user" class="form-label">ที่อยู่ลูกค้า</label>
                     <input type="text" class="form-control" id="Address-user" name="name" value={address_user}

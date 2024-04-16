@@ -15,6 +15,7 @@ export default function Editcheckstatus() {
     const [quantity, setquantity] = useState("");
     const [product_btu, setproduct_btu] = useState("");
     const [pay_type, setpay_type] = useState("");
+    const [payment_img, setpayment_img] = useState("");
 
  useEffect(()=>{
     axios.get(`http://localhost:3001/Editcheckstatus/${purchase_id}`)
@@ -28,6 +29,7 @@ export default function Editcheckstatus() {
         setquantity(res.data[0].quantity)
         setproduct_btu(res.data[0].product_btu)
         setpay_type(res.data[0].pay_type)
+        setpayment_img(res.data[0].payment_img)
     })
     .catch(err => console.log(err))
 
@@ -62,6 +64,7 @@ export default function Editcheckstatus() {
             console.error('Error sending email notification:', error);
         }
     };
+    const formattedDate = new Date(date).toLocaleDateString('en-GB');
     return (
         <div>
             <div class="container mt-5">
@@ -102,7 +105,7 @@ export default function Editcheckstatus() {
                         </div>
                         <div class="mb-3">
                         <label for="title-name" class="form-label">วันที่ชำระเงิน:</label>
-                        <span >{date}</span>
+                        <span>{formattedDate}</span>
                         </div>
                         <div class="mb-3">
                         <label for="title-name" class="form-label">ประเภทการชำระเงิน:</label>
@@ -110,6 +113,11 @@ export default function Editcheckstatus() {
                         </div>
                         <div class="mb-3">
                         <label for="title-name" class="form-label">หลักฐานการชำระเงิน:</label>
+                        <img
+                    src={payment_img}
+                    alt="ui/ux review check"
+                    style={{ width: '500px', height: '500px' }} // กำหนดขนาดรูปภาพเป็น 100x100 พิกเซล
+                  />
                         </div>
                     </div>
                     <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">
