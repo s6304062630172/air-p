@@ -33,6 +33,7 @@ export default function Workstatus() {
                         <th>username</th>
                         <th>ประเภทงาน</th>
                         <th>สถานะงาน</th>
+                        <th>ordering_id</th>
                         <th>ทีม</th>
                     </tr>
                 </thead>
@@ -43,9 +44,10 @@ export default function Workstatus() {
                             <td>{item.username}</td>
                             <td>{item.type}</td>
                             <td>{item.work_status}</td>
+                            <td>{item.ordering_id}</td>
                             <td>{item.team_number}</td>
                                       
-  <Link to={`/Editworkstatus/${item.purchase_id}`} className="btn btn-dark">
+  <Link to={`/Editworkstatus/${item.ordering_id}`} className="btn btn-dark">
     <svg class="h-6 w-6 text-slate-500" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" />
       <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />

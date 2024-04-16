@@ -33,6 +33,7 @@ export default function Workfinish() {
                         <th>username</th>
                         <th>ประเภทงาน</th>
                         <th>สถานะงาน</th>
+                        <th>ordering_id</th>
                         <th>ทีม</th>
                     </tr>
                 </thead>
@@ -43,8 +44,9 @@ export default function Workfinish() {
                             <td>{item.username}</td>
                             <td>{item.type}</td>
                             <td>{item.work_status}</td>
+                            <td>{item.ordering_id}</td>
                             <td>{item.team_number}</td>
-                            <Link to={`/Viewfinish/${item.purchase_id}`} className="btn btn-dark">
+                            <Link to={`/Viewfinish/${item.ordering_id}`} className="btn btn-dark">
                             <svg class="h-8 w-8 text-black-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> 
                              <path stroke="none" d="M0 0h24v24H0z"/>  <circle cx="12" cy="12" r="2" />  <path d="M2 12l1.5 2a11 11 0 0 0 17 0l1.5 -2" /> 
                               <path d="M2 12l1.5 -2a11 11 0 0 1 17 0l1.5 2" /></svg>

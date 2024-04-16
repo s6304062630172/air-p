@@ -22,6 +22,7 @@ import Editemployee from "./pages/employee/Editemployee";
 import Editquotation from "./pages/quotation/Editquotation";
 import Viewfinish from "./pages/checkstatus/Viewfinish";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Userquo from "./pages/userquo/Userquo";
 function App() {
   return (
     <div>
@@ -54,14 +55,15 @@ function App() {
           <Route path="/checkstatus" element={<Checkstatus />} /> 
           <Route path="/Workstatus" element={<Workstatus />} /> 
           <Route path="/Workfinish" element={<Workfinish />} />
-          <Route path="/Editworkstatus/:purchase_id" element={<Editworkstatus />} />
+          <Route path="/Editworkstatus/:ordering_id" element={<Editworkstatus />} />
           <Route path="/Editcheckstatus/:purchase_id" element={<Editcheckstatus />} />
           <Route path="/quotation" element={<Quotation />} /> 
           <Route path="/employee" element={<Employee />} /> 
           <Route path="/Editquotation/:no_quotation" element={<Editquotation />} />
           <Route path="/Editemployee/:employee_id" element={<Editemployee />} />
-          <Route path="/Viewfinish/:purchase_id" element={<Viewfinish />} />
+          <Route path="/Viewfinish/:ordering_id" element={<Viewfinish />} />
           <Route path="/dashboard" element={<Dashboard />} /> 
+          <Route path="/userquo" element={<Userquo />} /> 
 
         </Routes>
       </BrowserRouter>

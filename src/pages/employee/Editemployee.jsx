@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { event } from 'jquery';
+// import { event } from 'jquery';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-
+import { Button } from "@material-tailwind/react";
 
 export default function Editemployee() {
     
@@ -18,6 +18,7 @@ export default function Editemployee() {
     const [subdistrict_id ,setsubdistrict_id] = useState("");
     const [province_id,setprovince_id ] = useState("");
     const [district_id ,setdistrict_id] = useState("");
+    const [teams, setTeams] = useState([]);
     useEffect(()=>{
         axios.get(`http://localhost:3001/Editemployee/${employee_id}`)
         .then(res => {
@@ -35,11 +36,14 @@ export default function Editemployee() {
 
         })
         .catch(err => console.log(err))
+   // Fetch teams from database
+   axios.get('http://localhost:3001/teams')
+   .then(res => {
+       setTeams(res.data);
+   })
+   .catch(err => console.log(err));
+}, [employee_id]);
 
-        
-
-
-    },[])
     const navigate =  useNavigate();
     const select_position = employee_position
     const hanldeSubmit = (event) => {
@@ -61,9 +65,11 @@ export default function Editemployee() {
 
 
             <div class="container mt-5">
+            <div className="flex justify-between items-center mb-3">
                 <h1>แก้ไขข้อมูลพนักงาน</h1>
-
-                <form onSubmit={hanldeSubmit}>
+                <Button onClick={() => navigate('/Employee')} color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">Back</Button>
+                </div>
+                 <form onSubmit={hanldeSubmit}>
                     <div class="mb-3">
                         <label for="employee-name" class="form-label">ชื่อพนักงาน</label>
                         <input type="text" class="form-control" id="employee-name" name="name" value={employee_name} 
@@ -104,10 +110,14 @@ export default function Editemployee() {
                         <input type="text" class="form-control" id="salary" name="name" value={salary} 
                         onChange={(event) => { setsalary(event.target.value) }} />
                     </div>
-                    <div class="mb-3">
-                        <label for="team-number" class="form-label">ทีมที่</label>
-                        <input type="text" class="form-control" id="team-number" name="name" value={team_number} 
-                        onChange={(event) => { setteam_number(event.target.value) }} />
+                    <div>
+                        <label htmlFor="title-name" className="form-label">ทีม</label>
+                        <select onChange={(event) => setteam_number(event.target.value)}>
+                            <option disabled selected value="">เลือกทีม</option>
+                            {teams.map(team => (
+                                <option key={team.team_id} value={team.team_number}>{team.team_number}</option>
+                            ))}
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="subdistrict" class="form-label">แขวง</label>
@@ -125,7 +135,8 @@ export default function Editemployee() {
                         onChange={(event) => { setdistrict_id(event.target.value) }} />
                     </div>
          
-                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                  
+                    <Button type="submit" color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">บันทึก</Button>
                 </form>
             </div>
 

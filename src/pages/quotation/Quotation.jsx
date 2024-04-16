@@ -171,6 +171,8 @@ export default function Quotation() {
             pdf.save('quotation.pdf');
         });
     };
+
+    
     return (
         <div>
             <h3>Quotation manage</h3>
@@ -341,7 +343,6 @@ export default function Quotation() {
                             <br></br>
                         </table>
                     </div>
-
                     <Button onClick={() => setSelectedQuotation(null)} color="blue" ripple="light" rounded={true} size="sm" className="text-xs uppercase font-medium px-6 py-2.5">Back</Button>
                     {/* เพิ่มปุ่มdownload  */}
                     <button className="btn btn-primary" onClick={downloadPDF}>Download PDF</button>

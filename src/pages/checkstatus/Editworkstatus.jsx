@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from "@material-tailwind/react";
 
 export default function Editworkstatus() {
-    const { purchase_id } = useParams();
+    const { ordering_id } = useParams(); // เปลี่ยนจาก purchase_id เป็น ordering_id
     const [work_status, setWorkStatus] = useState('');
     const [team_number, setTeamNumber] = useState('');
     const [username, setUsername] = useState('');
@@ -13,9 +13,10 @@ export default function Editworkstatus() {
     const [detail, setDetail] = useState('');
     const [teams, setTeams] = useState([]);
     const navigate = useNavigate();
+    const [employee_name, setemployee_name] = useState([]);
 
     useEffect(() => {
-        Axios.get(`http://localhost:3001/Editworkstatus/${purchase_id}`)
+        Axios.get(`http://localhost:3001/Editworkstatus/${ordering_id}`) // แก้ URL เป็นใช้ ordering_id
             .then(res => {
                 const data = res.data[0];
                 setWorkStatus(data.work_status);
@@ -24,23 +25,25 @@ export default function Editworkstatus() {
                 setAddress(data.address);
                 setType(data.type);
                 setDetail(data.detail);
+                setemployee_name(data.employee_name.split(',').map(name => name.trim()));
             })
             .catch(err => console.log(err));
-
+    
         // Fetch teams from database
         Axios.get('http://localhost:3001/teams')
             .then(res => {
                 setTeams(res.data);
             })
             .catch(err => console.log(err));
-    }, [purchase_id]);
+    
+    }, [ordering_id]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        Axios.put(`http://localhost:3001/updateworkstatus/${purchase_id}`, { work_status, team_number, detail })
+        Axios.put(`http://localhost:3001/updateworkstatus/${ordering_id}`, { work_status, team_number, detail })
             .then(({ data }) => {
                 if (data.updated) {
-                    navigate(`/Editworkstatus/${purchase_id}`);
+                    navigate(`/Editworkstatus/${ordering_id}`); // แก้ URL เป็นใช้ ordering_id
                 } else {
                     alert('Not updated');
                 }
@@ -49,7 +52,7 @@ export default function Editworkstatus() {
     };
 
     const notifyLine = async () => {
-        const message = `\nงานที่: ${purchase_id}\nประเภทงาน: ${type}\nสถานะงาน: ${work_status}\nทีม: ${team_number}\nลูกค้า: ${username}\nที่อยู่: ${address}`;
+        const message = `\nงานที่: ${ordering_id}\nประเภทงาน: ${type}\nสถานะงาน: ${work_status}\nทีม: ${team_number}\nลูกค้า: ${username}\nที่อยู่: ${address}`;
         try {
             await Axios.post(
                 'http://localhost:3001/notify',
@@ -77,7 +80,7 @@ export default function Editworkstatus() {
                 <div className="mb-3">
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">เลขใบสั่งซื้อ:</label>
-                        <span>{purchase_id}</span>
+                        <span>{ordering_id}</span> {/* เปลี่ยน purchase_id เป็น ordering_id */}
                     </div>
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">ประเภทงาน:</label>
@@ -100,6 +103,12 @@ export default function Editworkstatus() {
                             ))}
                         </select>
                     </div>
+                    <div>
+    <label htmlFor="title-name" className="form-label">แสดงรายชื่อสมาชิกในทีม:</label>
+    {employee_name.map((name, index) => (
+        <span key={index}>{name} </span>
+    ))}
+</div>
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">Username:</label>
                         <span>{username}</span>
@@ -121,3 +130,6 @@ export default function Editworkstatus() {
         </div>
     );
 }
+
+
+

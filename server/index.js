@@ -32,12 +32,12 @@ app.get('/product', (req, res) => {
     }
   });
 });
-app.get('/userInfo/:username',(req,res)=>{
+app.get('/userInfo/:username', (req, res) => {
   const username = req.params.username;
-  db.query("SELECT * FROM user WHERE username = ?",username,(err,result)=>{
-    if(err){
+  db.query("SELECT * FROM user WHERE username = ?", username, (err, result) => {
+    if (err) {
       console.log(err);
-    }else{
+    } else {
       res.send(result)
     }
   })
@@ -107,11 +107,11 @@ app.get('/everning', (req, res) => {
 });
 
 
-app.get("/ordering",(req,res)=>{
-  db.query("SELECT * FROM ordering",(err,result)=>{
-    if(err){
+app.get("/ordering", (req, res) => {
+  db.query("SELECT * FROM ordering", (err, result) => {
+    if (err) {
       console.log(err);
-    }else{
+    } else {
       res.send(result)
     }
   })
@@ -181,7 +181,7 @@ app.put('/update/:product_id', (req, res) => {
 app.put('/updateAddress/:email', (req, res) => {
   const sql = "UPDATE user SET address = ? WHERE email =?"
   const email = req.params.email;
-  db.query(sql, [req.body.address,email], (err, result) => {
+  db.query(sql, [req.body.address, email], (err, result) => {
     if (err) return res.json("error")
     return res.json({ updated: true })
   })
@@ -288,63 +288,63 @@ app.get('/get/quotation', (req, res) => {
 // });
 app.post('/quotation/create', (req, res) => {
   const {
-      title_quotation,
-      date_,
-      id_tax_user,
-      id_tax_admin,
-      annotation,
-      phone_admin,
-      phone_user,
-      address_user,
-      email,
-      total_vat,
-      vat,
-      products
+    title_quotation,
+    date_,
+    id_tax_user,
+    id_tax_admin,
+    annotation,
+    phone_admin,
+    phone_user,
+    address_user,
+    email,
+    total_vat,
+    vat,
+    products
   } = req.body;
 
   // Start a database transaction
   db.beginTransaction((err) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).json({ error: "Failed to start transaction" });
-      }
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to start transaction" });
+    }
 
-      // Insert quotation record
-      db.query('INSERT INTO quotation (title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,total_vat,vat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,total_vat,vat],
-          (err, result) => {
-              if (err) {
-                  return db.rollback(() => {
-                      console.error(err);
-                      res.status(500).json({ error: "Failed to insert quotation record" });
-                  });
-              }
-
-              const quotationId = result.insertId;
-
-              // Insert products into cartquo table
-              const values = products.map(product => [quotationId, product.product_id, product.price, product.quantity]);
-              db.query('INSERT INTO cartquo (no_quotation, product_id, price, quantity) VALUES ?', [values], (err, result) => {
-                  if (err) {
-                      return db.rollback(() => {
-                          console.error(err);
-                          res.status(500).json({ error: "Failed to insert products into cartquo table" });
-                      });
-                  }
-
-                  // Commit the transaction
-                  db.commit((err) => {
-                      if (err) {
-                          return db.rollback(() => {
-                              console.error(err);
-                              res.status(500).json({ error: "Failed to commit transaction" });
-                          });
-                      }
-
-                      res.status(200).json({ message: "Quotation and products inserted successfully" });
-                  });
-              });
+    // Insert quotation record
+    db.query('INSERT INTO quotation (title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email,total_vat,vat) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [title_quotation, date_, id_tax_user, id_tax_admin, annotation, phone_admin, phone_user, address_user, email, total_vat, vat],
+      (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err);
+            res.status(500).json({ error: "Failed to insert quotation record" });
           });
+        }
+
+        const quotationId = result.insertId;
+
+        // Insert products into cartquo table
+        const values = products.map(product => [quotationId, product.product_id, product.price, product.quantity]);
+        db.query('INSERT INTO cartquo (no_quotation, product_id, price, quantity) VALUES ?', [values], (err, result) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error(err);
+              res.status(500).json({ error: "Failed to insert products into cartquo table" });
+            });
+          }
+
+          // Commit the transaction
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error(err);
+                res.status(500).json({ error: "Failed to commit transaction" });
+              });
+            }
+
+            res.status(200).json({ message: "Quotation and products inserted successfully" });
+          });
+        });
+      });
   });
 });
 
@@ -379,42 +379,42 @@ app.delete('/delete/quotation/:no_quotation', (req, res) => {
 
   // Start a database transaction
   db.beginTransaction((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to start transaction" });
+    }
+
+    // Delete from cartquo table
+    db.query('DELETE FROM cartquo WHERE no_quotation = ?', [no_quotation], (err, result) => {
       if (err) {
+        return db.rollback(() => {
           console.error(err);
-          return res.status(500).json({ error: "Failed to start transaction" });
+          res.status(500).json({ error: "Failed to delete products from cartquo table" });
+        });
       }
 
-      // Delete from cartquo table
-      db.query('DELETE FROM cartquo WHERE no_quotation = ?', [no_quotation], (err, result) => {
+      // Delete from quotation table
+      db.query('DELETE FROM quotation WHERE no_quotation = ?', [no_quotation], (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err);
+            res.status(500).json({ error: "Failed to delete quotation record" });
+          });
+        }
+
+        // Commit the transaction
+        db.commit((err) => {
           if (err) {
-              return db.rollback(() => {
-                  console.error(err);
-                  res.status(500).json({ error: "Failed to delete products from cartquo table" });
-              });
+            return db.rollback(() => {
+              console.error(err);
+              res.status(500).json({ error: "Failed to commit transaction" });
+            });
           }
 
-          // Delete from quotation table
-          db.query('DELETE FROM quotation WHERE no_quotation = ?', [no_quotation], (err, result) => {
-              if (err) {
-                  return db.rollback(() => {
-                      console.error(err);
-                      res.status(500).json({ error: "Failed to delete quotation record" });
-                  });
-              }
-
-              // Commit the transaction
-              db.commit((err) => {
-                  if (err) {
-                      return db.rollback(() => {
-                          console.error(err);
-                          res.status(500).json({ error: "Failed to commit transaction" });
-                      });
-                  }
-
-                  res.status(200).json({ message: "Quotation and related products deleted successfully" });
-              });
-          });
+          res.status(200).json({ message: "Quotation and related products deleted successfully" });
+        });
       });
+    });
   });
 });
 //Edit
@@ -451,9 +451,16 @@ app.post("/post/employee", (req, res) => {
   const employee_surname = req.body.employee_surname;
   const employee_phone = req.body.employee_phone;
   const employee_position = req.body.employee_position;
+  const employee_address = req.body.employee_address;
+  const line = req.body.line;
+  const salary = req.body.salary;
+  const team_number = req.body.team_number;
+  const subdistrict_id = req.body.subdistrict_id;
+  const province_id = req.body.province_id;
+  const district_id = req.body.district_id;
   db.query(
-    "INSERT INTO employee (employee_name,employee_surname,employee_phone,employee_position) VALUES(?,?,?,?) ",
-    [employee_name, employee_surname, employee_phone, employee_position],
+    "INSERT INTO employee (employee_name,employee_surname,employee_phone,employee_position,employee_address,line,salary,team_number,subdistrict_id,province_id,district_id) VALUES(?,?,?,?,?,?,?,?,?,?,?) ",
+    [employee_name, employee_surname, employee_phone, employee_position, employee_address, line, salary, team_number, subdistrict_id, province_id, district_id],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -463,9 +470,9 @@ app.post("/post/employee", (req, res) => {
     }
   );
 });
-app.delete('/delete/employee/:id', (req, res) => {
-  const id = req.params.id;
-  db.query("DELETE FROM employee WHERE id = ?", id, (err, result) => {
+app.delete('/delete/employee/:employee_id', (req, res) => {
+  const employee_id = req.params.employee_id;
+  db.query("DELETE FROM employee WHERE employee_id = ?", employee_id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -474,9 +481,9 @@ app.delete('/delete/employee/:id', (req, res) => {
   })
 })
 //Edit
-app.get('/editemployee/:id', (req, res) => {
-  const id = req.params.id
-  db.query("SELECT * FROM employee WHERE id = ?", id, (err, result) => {
+app.get('/editemployee/:employee_id', (req, res) => {
+  const employee_id = req.params.employee_id
+  db.query("SELECT * FROM employee WHERE employee_id = ?", employee_id, (err, result) => {
     if (err) {
       console.log(err)
     } else {
@@ -484,10 +491,10 @@ app.get('/editemployee/:id', (req, res) => {
     }
   })
 })
-app.put('/updateemployee/:id', (req, res) => {
-  const sql = "UPDATE employee SET employee_name = ?,employee_surname = ?,employee_phone = ?,employee_position = ? WHERE id =?"
-  const id = req.params.id;
-  db.query(sql, [req.body.employee_name, req.body.employee_surname, req.body.employee_phone, req.body.employee_position, id], (err, result) => {
+app.put('/updateemployee/:employee_id', (req, res) => {
+  const sql = "UPDATE employee SET employee_name = ?,employee_surname = ?,employee_phone = ?,employee_position = ?,employee_address = ?,line = ?,salary = ?,team_number = ?,subdistrict_id = ?,province_id = ?,district_id = ? WHERE employee_id =?"
+  const employee_id = req.params.employee_id;
+  db.query(sql, [req.body.employee_name, req.body.employee_surname, req.body.employee_phone, req.body.employee_position, req.body.employee_address, req.body.line, req.body.salary, req.body.team_number, req.body.subdistrict_id, req.body.province_id, req.body.district_id, employee_id], (err, result) => {
     if (err) return res.json("error")
     return res.json({ updated: true })
   })
@@ -657,20 +664,20 @@ app.get('/get/checkstatus', (req, res) => {
 app.get('/editcheckstatus/:purchase_id', (req, res) => {
   const purchase_id = req.params.purchase_id;
   db.query(
-      "SELECT purchase.*, ordering.product_id, ordering.quantity, product.product_name, product.product_btu " +
-      "FROM purchase " +
-      "JOIN ordering ON purchase.purchase_id = ordering.purchase_id " +
-      "JOIN product ON ordering.product_id = product.product_id " +
-      "WHERE purchase.purchase_id = ?",
-      purchase_id,
-      (err, result) => {
-          if (err) {
-              console.log(err);
-              res.status(500).json({ error: 'Internal Server Error' });
-          } else {
-              res.json(result);
-          }
+    "SELECT purchase.*, ordering.product_id, ordering.quantity, product.product_name, product.product_btu " +
+    "FROM purchase " +
+    "JOIN ordering ON purchase.purchase_id = ordering.purchase_id " +
+    "JOIN product ON ordering.product_id = product.product_id " +
+    "WHERE purchase.purchase_id = ?",
+    purchase_id,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        res.json(result);
       }
+    }
   );
 });
 
@@ -708,10 +715,11 @@ app.get('/get/workstatus', (req, res) => {
     }
   });
 });
+
 //edit work status
-app.get('/Editworkstatus/:purchase_id', (req, res) => {
-  const purchase_id = req.params.purchase_id;
-  db.query("SELECT purchase.email, user.username, user.address, ordering.type ,ordering.detail FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id WHERE purchase.purchase_id = ?", purchase_id, (err, result) => {
+app.get('/Editworkstatus/:ordering_id', (req, res) => {
+  const ordering_id = req.params.ordering_id; // เปลี่ยน purchase_id เป็น ordering_id
+  db.query("SELECT purchase.email, user.username, user.address, ordering.type ,ordering.detail, employee.employee_name FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id INNER JOIN employee ON ordering.team_number = employee.team_number WHERE ordering.ordering_id = ?", ordering_id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -731,14 +739,15 @@ app.get('/teams', (req, res) => {
   });
 });
 
-app.put('/updateworkstatus/:purchase_id', (req, res) => {
-  const purchaseId = req.params.purchase_id;
+app.put('/updateworkstatus/:ordering_id', (req, res) => {
+  const orderingId = req.params.ordering_id; // เปลี่ยน purchase_id เป็น ordering_id
   const workStatus = req.body.work_status;
   const teamNumber = req.body.team_number; // เพิ่มการรับค่า team_number
   const detail = req.body.detail;
+  
 
-  const updateOrderingSql = "UPDATE ordering SET work_status = ?, team_number = ? , detail = ? WHERE purchase_id = ?";
-  db.query(updateOrderingSql, [workStatus, teamNumber,detail, purchaseId], (err, result) => {
+  const updateOrderingSql = "UPDATE ordering SET work_status = ?, team_number = ? , detail = ? WHERE ordering_id = ?";
+  db.query(updateOrderingSql, [workStatus, teamNumber, detail, orderingId], (err, result) => {
     if (err) {
       console.error("Error updating work_status and team_number in ordering table:", err);
       return res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตสถานะการทำงานและ team_number ในตาราง ordering" });
@@ -746,7 +755,7 @@ app.put('/updateworkstatus/:purchase_id', (req, res) => {
 
     const email = req.body.email;
     const updatePurchaseSql = "UPDATE purchase SET email = ? WHERE purchase_id = ?";
-    db.query(updatePurchaseSql, [email, purchaseId], (purchaseErr, purchaseResult) => {
+    db.query(updatePurchaseSql, [email, orderingId], (purchaseErr, purchaseResult) => {
       if (purchaseErr) {
         console.error("Error updating email in purchase table:", purchaseErr);
         return res.status(500).json({ error: "เกิดข้อผิดพลาดในการอัปเดตอีเมลในตาราง purchase" });
@@ -756,24 +765,28 @@ app.put('/updateworkstatus/:purchase_id', (req, res) => {
     });
   });
 });
-//////Check Finish status///////////
+
+
+
+// Check Finish status
 app.get('/get/finishstatus', (req, res) => {
   db.query("SELECT ordering.*, user.username FROM ordering INNER JOIN purchase ON ordering.purchase_id = purchase.purchase_id INNER JOIN user ON purchase.email = user.email WHERE ordering.work_status = 'สำเร็จ'", (err, result) => {
     if (err) {
       console.log(err);
-
+      res.status(500).json({ error: "Internal server error" });
     } else {
       res.send(result);
     }
   });
-
 });
-//view finish
-app.get('/Viewfinish/:purchase_id', (req, res) => {
-  const purchase_id = req.params.purchase_id;
-  db.query("SELECT purchase.email, user.username, user.address, ordering.type ,ordering.detail, ordering.work_status, ordering.team_number FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id WHERE purchase.purchase_id = ?", purchase_id, (err, result) => {
+
+// View finish
+app.get('/Viewfinish/:ordering_id', (req, res) => {
+  const ordering_id = req.params.ordering_id;
+  db.query("SELECT purchase.email, user.username, user.address, ordering.type, ordering.detail, ordering.work_status, ordering.team_number FROM purchase INNER JOIN user ON purchase.email = user.email INNER JOIN ordering ON purchase.purchase_id = ordering.purchase_id WHERE ordering.ordering_id = ?", ordering_id, (err, result) => {
     if (err) {
       console.log(err);
+      res.status(500).json({ error: "Internal server error" });
     } else {
       res.send(result);
     }
@@ -785,20 +798,20 @@ app.get('/Viewfinish/:purchase_id', (req, res) => {
 app.post('/notify', async (req, res) => {
   const message = req.body.message;
   try {
-      await axios.post(
-          'https://notify-api.line.me/api/notify',
-          `message=${message}`,
-          {
-              headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                  'Authorization': `Bearer ${LINE_NOTIFY_TOKEN}`
-              }
-          }
-      );
-      res.status(200).json({ success: true });
+    await axios.post(
+      'https://notify-api.line.me/api/notify',
+      `message=${message}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${LINE_NOTIFY_TOKEN}`
+        }
+      }
+    );
+    res.status(200).json({ success: true });
   } catch (error) {
-      console.error('Error sending notification:', error);
-      res.status(500).json({ success: false, error: 'Error sending notification' });
+    console.error('Error sending notification:', error);
+    res.status(500).json({ success: false, error: 'Error sending notification' });
   }
 });
 
@@ -806,8 +819,8 @@ app.post('/notify', async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
-      pass: 'xwnythxjudoryuyo' // ใส่รหัสผ่านของคุณที่นี่
+    user: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
+    pass: 'xwnythxjudoryuyo' // ใส่รหัสผ่านของคุณที่นี่
   }
 });
 
@@ -820,21 +833,21 @@ app.post('/notifyEmail', (req, res) => {
 
   // กำหนดข้อความอีเมล์
   const mailOptions = {
-      from: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
-      to: email,
-      subject: 'แสงทองแอร์ แอนด์ เซอร์วิส',
-      text: message
+    from: 'thanaree.satang@gmail.com', // ใส่อีเมล์ของคุณที่นี่
+    to: email,
+    subject: 'แสงทองแอร์ แอนด์ เซอร์วิส',
+    text: message
   };
 
   // ส่งอีเมล์
   transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-          console.error('Error sending email:', error);
-          res.status(500).send('Internal Server Error');
-      } else {
-          console.log('Email sent:', info.response);
-          res.status(200).send('Email Sent Successfully');
-      }
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Internal Server Error');
+    } else {
+      console.log('Email sent:', info.response);
+      res.status(200).send('Email Sent Successfully');
+    }
   });
 });
 
@@ -860,12 +873,12 @@ app.get('/dashboard', (req, res) => {
           total_sold DESC
       LIMIT 3;
   `, (err, result) => {
-      if (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Internal server error' });
-          return;
-      }
-      res.json(result);
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(result);
   });
 });
 //ยอดขายรายสัปดาห์
@@ -885,12 +898,12 @@ app.get('/api/weekly-sales', (req, res) => {
       ORDER BY
           FIELD(day_name, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
   `, (err, result) => {
-      if (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Internal server error' });
-          return;
-      }
-      res.json(result);
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(result);
   });
 });
 // app.get('/api/weekly-sales', (req, res) => {
@@ -947,12 +960,87 @@ app.get('/api/monthly-sales', (req, res) => {
       ORDER BY
           MONTH(p.date);
   `, (err, result) => {
-      if (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Internal server error' });
-          return;
-      }
-      res.json(result);
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+      return;
+    }
+    res.json(result);
+  });
+});
+/////////////////User quotation///////////////////////////
+app.post('/userquo', (req, res) => {
+  const {
+    date_,
+    id_tax_user,
+    phone_user,
+    address_user,
+    email,
+    products,
+  } = req.body;
+
+  // Start a database transaction
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to start transaction" });
+    }
+
+    // Insert quotation record
+    db.query('INSERT INTO quotation (date_, id_tax_user, phone_user, address_user, email) VALUES (?, ?, ?, ?, ?)',
+      [date_, id_tax_user, phone_user, address_user, email],
+      (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err);
+            res.status(500).json({ error: "Failed to insert quotation record" });
+          });
+        }
+
+        const quotationId = result.insertId;
+
+        // Insert products into cartquo table
+        const values = products.map((product) => [quotationId, product.product_id, product.quantity]);
+        db.query('INSERT INTO cartquo (no_quotation, product_id, quantity) VALUES ?', [values], (err, result) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error(err);
+              res.status(500).json({ error: "Failed to insert products into cartquo table" });
+            });
+          }
+
+          // Commit the transaction
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error(err);
+                res.status(500).json({ error: "Failed to commit transaction" });
+              });
+            }
+
+            res.status(200).json({ message: "Quotation and products inserted successfully" });
+          });
+        });
+      });
+  });
+});
+
+// Define the API endpoint
+app.get('/member', (req, res) => {
+  const { purchase_id } = req.query;
+  const query = `
+      SELECT o.team_number, e.employee_name
+      FROM ordering o
+      JOIN employee e ON o.team_number = e.team_number
+      WHERE o.purchase_id = '${purchase_id}';
+  `;
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.json(results);
   });
 });
 app.listen('3001', () => {

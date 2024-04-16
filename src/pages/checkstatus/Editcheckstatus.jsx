@@ -120,7 +120,6 @@ export default function Editcheckstatus() {
                     </Button>
                 </form>
             </div>
-         
         </div>
     )
 }

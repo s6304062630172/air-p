@@ -5,7 +5,7 @@ import { Button } from "@material-tailwind/react";
 
 export default function Viewfinish() {
 
-    const { purchase_id } = useParams();
+    const { ordering_id } = useParams(); // เปลี่ยน purchase_id เป็น ordering_id
     const [work_status, setWorkStatus] = useState('');
     const [team_number, setTeamNumber] = useState('');
     const [username, setUsername] = useState('');
@@ -13,7 +13,7 @@ export default function Viewfinish() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        Axios.get(`http://localhost:3001/Viewfinish/${purchase_id}`)
+        Axios.get(`http://localhost:3001/Viewfinish/${ordering_id}`)
             .then(res => {
                 const data = res.data[0];
                 setWorkStatus(data.work_status);
@@ -22,7 +22,7 @@ export default function Viewfinish() {
                 setType(data.type);
             })
             .catch(err => console.log(err));
-    }, [purchase_id]);
+    }, [ordering_id]);
 
     return (
         <div className="container mt-5">
@@ -34,7 +34,7 @@ export default function Viewfinish() {
                 <div className="mb-3">
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">เลขใบสั่งซื้อ:</label>
-                        <span>{purchase_id}</span>
+                        <span>{ordering_id}</span> {/* เปลี่ยน purchase_id เป็น ordering_id */}
                     </div>
                     <div className="mb-3">
                         <label htmlFor="title-name" className="form-label">ประเภทงาน:</label>
