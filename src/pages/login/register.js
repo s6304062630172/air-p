@@ -9,10 +9,9 @@ export default function Register() {
     email: "",
     username: "",
     password: "",
-    address: "1",
-    subdistrict_id: "1",
-    province_id: "1",
-    district_id: "1"
+    address: " ",
+    name:"",
+    phone_number:"",
   })
   const navigate = useNavigate();
   const handleInput = (event) => {
@@ -23,12 +22,15 @@ export default function Register() {
     event.preventDefault();
     axios.post("http://localhost:3001/register", uservalues)
       .then(res => {
-        console.log("Register successfully!!");
-        alert("สมัครสมาชิกสำเร็จ")
-        navigate('/login')
-        
-      })
+        if(res.data =="มีชื่อผู้ใช้นี้อยู่แล้ว"){
+          alert("Email นี้มีผู้ใช้เเล้ว")
+        }else{
+          console.log("Register successfully!!");
+          alert("สมัครสมาชิกสำเร็จ")
+          navigate('/login')
 
+        }
+      })
       .catch(err => console.log(err));
   }
 
@@ -41,7 +43,14 @@ export default function Register() {
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700">Username</label>
             <input type="text" id="username" name="username" onChange={handleInput} className="form-input mt-1 block w-full" required />
-
+          </div>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700">Name</label>
+            <input type="text" id="name" name="name" onChange={handleInput} className="form-input mt-1 block w-full" required />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700">Phone Number</label>
+            <input type="text" id="phone_number" name="phone_number" onChange={handleInput} className="form-input mt-1 block w-full" required />
           </div>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700">Email</label>

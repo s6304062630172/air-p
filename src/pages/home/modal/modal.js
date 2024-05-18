@@ -3,7 +3,6 @@ import { Button, Typography, Radio, Input } from "@material-tailwind/react";
 // import Productdetail from "./product";
 import DatePicker from 'react-datepicker';
 import axios from "axios";
-import { addDays } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 const Modal = ({
   productClick,
@@ -15,7 +14,7 @@ const Modal = ({
   // const [endDate, setEndDate] = useState(null); // If you want to select a range, initialize endDate as null
   const [Datemorning, setDatemorning] = useState([])
   const [DateEverning, setDateEverning] = useState([])
-  const [ExcludeDates,setExcludeDates]= useState([])
+  const [ExcludeDates, setExcludeDates] = useState([])
   const handleChange = (date) => {
     const isoDate = `${date.toISOString().split('T')[0]}`;
     setStartDate(isoDate);
@@ -26,18 +25,20 @@ const Modal = ({
     needDate: "",
     timeStart: "",
     timeStop: "",
-    time: ""
+    time: "",
+    detail_user:""
   });
   const onSubmit = (e) => {
     if (productClick?.product_quantity) {
       e.preventDefault();
       return returnSubmitData(formData);
-
+      
     } else {
       window.confirm("!!สินค้าหมด!!")
     }
   };
   const onChangeData = (event) => {
+    console.log(formData.detail_user);
     // กำหนดค่าใหม่ให้กับ formTotal โดยใช้ Spread Operator เพื่อคัดลอกค่าเดิมใน formTotal แล้วเพิ่มหรืออัปเดตค่าใหม่
     setFormData({ ...formData, [event.target.name]: event.target.value }); //เมื่อเปลี่ยนค่า ให้ใส่ค่าใน formTotal name ด้วยใส่ค่า value ลงในตัวแปร name เเล้ว บันทึกค่าใหม่ลง FormTotal 
   };
@@ -79,13 +80,14 @@ const Modal = ({
       needDate: "",
       timeStart: "",
       timeStop: "",
+      detail_user:""
     });
   }, [statusModal]);
   useEffect(() => {
-    
+
     console.log("--->", productClick)
   }, [productClick])
-  useEffect(()=>{
+  useEffect(() => {
     morning();
     everning();
   })
@@ -101,25 +103,20 @@ const Modal = ({
         setDatemorning(datesWithoutTime);
       })
       .catch(err => console.log(err));
-}
-const everning = () => {
-  axios.get('http://localhost:3001/everning')
-    .then(res => {
-      const datesWithAdditionalDay = res.data.map(item => {
-        const date = new Date(item.date_book.split('T')[0]); // สร้างวัตถุ Date จากวันที่
-        date.setDate(date.getDate() + 1); // เพิ่ม 1 วันในวันที่
-        return date.toISOString().split('T')[0]; // แปลงเป็น ISO date และส่งคืน
-      });
-      setDateEverning(datesWithAdditionalDay);
-      
-    })
-    .catch(err => console.log(err));
-}
+  }
+  const everning = () => {
+    axios.get('http://localhost:3001/everning')
+      .then(res => {
+        const datesWithAdditionalDay = res.data.map(item => {
+          const date = new Date(item.date_book.split('T')[0]); // สร้างวัตถุ Date จากวันที่
+          date.setDate(date.getDate() + 1); // เพิ่ม 1 วันในวันที่
+          return date.toISOString().split('T')[0]; // แปลงเป็น ISO date และส่งคืน
+        });
+        setDateEverning(datesWithAdditionalDay);
 
-
-
-
-
+      })
+      .catch(err => console.log(err));
+  }
   return (
     <dialog id="modal" className="">
       <div className="justify-center space-x-5 space-y-5 mb-5 px-5 py-10 top-0">
@@ -144,7 +141,7 @@ const everning = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-10 py-10 justify-center">
                 <img
                   src={productClick?.product_img}
-                  className="object-cover w-96 h-full rounded-lg shadow-xl border-1 border-gray-200"
+                  className="object-cover w-120 h-full rounded-lg shadow-xl border-1 border-gray-200"
                   alt={productClick?.product_name}
                 />
                 <div className="bg-gray-100 h-full rounded-lg overflow-hidden border-1 border-gray-200">
@@ -155,16 +152,10 @@ const everning = () => {
                     {productClick?.product_detail}
                   </Typography>
 
-                  <div className="flex justify-center items-center px-5">
-                    <div className="flex gap-10">
-                      <Radio name="type" label="เลือก BTU" />
-                      <Radio name="type" label="คำนวณ BTU" defaultChecked />
-                    </div>
-                  </div>
-
+               
                   <div className="flex justify-center gap-4 p-2">
                     <Button className="bg-white rounded font-bold text-black text-lg hover:bg-gray-200">
-                      {productClick?.product_btu}
+                      BTU:{productClick?.product_btu}
                     </Button>
                   </div>
 
@@ -188,23 +179,35 @@ const everning = () => {
                       บาท
                     </Typography>
                   </div>
-                  <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
-                    <Typography
-                      variant="h6"
-                      className="justify-start font-bold px-2 p-2"
-                    >
-                      เลือกวัน/เวลาที่ต้องการ
+                  <div className="flex  gap-4 p-2">
+                   
+                    <Typography variant="h8" className=" text-red-500">
+                        *กรุณาเลือก "ช่วงเวลา" ที่ต้องการก่อนเพื่อตรวจสอบ "วันที่" คิวว่าง
                     </Typography>
-                    {/* <input
-                    required
-                    onChange={(e) => onChangeData(e)}
-                    type="date"
-                    name="needDate"
-                    min={(new Date()).toISOString().split('T')[0]}
-                    value={formData?.needDate}
-                    
-                    className="bg-gray-400 rounded-lg px-2 w-fit p-2 text-center text-gray-900"
-                  /> */}
+                  </div>
+
+                  <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
+                    <Typography variant="h6" className="justify-start font-bold px-2 p-2">
+                      เลือกเวลาที่ต้องการ
+                    </Typography>
+                    <div className="w-72">
+                      <select
+                        required
+                        className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
+                        name="time"
+                        onChange={(e) => onChangeSelectTime(e)}
+                        value={formData.time ? formData.time : ""}
+                      >
+                        <option selected>เลือกเวลาที่ต้องการ</option>
+                        <option value="1" selected={formData.time === "1"}>เช้า: 9.00-12.00</option>
+                        <option value="2" selected={formData.time === "2"}>บ่าย: 13.00-17.00</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap justify-center space-x-5 space-y-1 mb-10 px-5">
+                    <Typography variant="h6" className="justify-start font-bold px-2 p-2">
+                      เลือกวันที่ต้องการ
+                    </Typography>
                     <DatePicker
                       name="needDate"
                       selected={startDate}
@@ -214,21 +217,14 @@ const everning = () => {
                       dateFormat={'dd/MM/yyyy'}
                       minDate={new Date()}
                       placeholderText="เลือกวันที่ต้องการ"
-
+                      className="outline outline-1 rounded-lg bg-white w-full px-12 py-2"
                     />
-                    <div className="w-72">
-                      <select
-                        required
-                        className="outline outline-1 rounded-lg bg-white w-full px-3 py-2"
-                        name="time"
-                        onChange={(e) => onChangeSelectTime(e)}
-                        value={formData.time ? formData.time : ""}
-                      > <option selected  >เลือกเวลาที่ต้องการ</option>
-                        <option value="1" selected={formData.time === "1"}>เช้า:9.00-12.00</option>
-                        <option value="2" selected={formData.time === "2"}>บ่าย:13.00-17.00</option>
-                      </select>
-                    </div>
                   </div>
+                    <Typography variant="h6" className="justify-start font-bold px-2 p-2 ml-3">
+                      ข้อมูลเพิ่มเติมที่ต้องการ(กรอกหรือไม่ก็ได้)
+                    </Typography>
+                    <textarea onChange={onChangeData} name="detail_user" type="text" className="outline outline-1 rounded-lg bg-white w-2/3 ml-6 mr-6 px-2 py-2 "></textarea >
+
                   <div className="flex justify-center gap-4 p-2">
                     <Button
                       type="submit"

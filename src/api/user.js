@@ -9,8 +9,8 @@ const config_authen = () => {
 const username = localStorage.getItem("username");
 
 export default {
-  async getUser() {
-    const apiLine = `${process.env.REACT_APP_API_URL}/userInfo`;
+  async getUser(username) {
+    const apiLine = `http://localhost:3001/userInfo/${username}`;
     const response = await Axios.get(apiLine, config_authen())
       .then(async (res) => {
         return await res.data;

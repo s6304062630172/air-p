@@ -1,10 +1,10 @@
 import { Avatar } from "@material-tailwind/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [statusNavbar, setStatusNavbar] = useState(false);
-  const username = localStorage.getItem('username')
+  const [username, setUsername] = useState(localStorage.getItem('username'));
   const toggleNavbar = () => {
     setStatusNavbar(!statusNavbar);
   };
@@ -13,10 +13,8 @@ const Navbar = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('email');
     localStorage.removeItem("productCart");
-    localStorage.setItem('userinfo',"");
+    localStorage.setItem('userinfo', "");
     window.location = '/login';
-
-
   }
   const onChangePage = (path) => {
     setStatusNavbar(!statusNavbar);
@@ -24,12 +22,23 @@ const Navbar = () => {
       document.getElementById("home").click();
     } else if (path === "cart") {
       document.getElementById("cart").click();
+    } else if (path === "sucess") {
+      document.getElementById("sucess").click();
+    } else if (path === "history") {
+      document.getElementById("history").click();
     }
   };
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    setUsername(storedUsername);
+  }, []); // เรียกใช้ครั้งเดียวหลังจาก Navbar โหลดเสร็จ
+
   return (
     <>
       <Link to="/" id="home"></Link>
       <Link to="/cart" id="cart"></Link>
+      <Link to="/sucess" id="sucess"></Link>
+      <Link to="/history" id="history"></Link>
       <nav className="w-full top-0 z-50 bg-gray-800">
         <div className="max-w-12xl mx-auto sm:px-6 lg:px-12">
           <div className="flex items-center h-20 flex justify-between">
@@ -58,11 +67,11 @@ const Navbar = () => {
                     </svg>
                   </button>
                 </div>
-                <div className="flex-shrink-0">
-                  <img
-                    src="./imgs/logo.jpg"
-                    className="w-16 h-16 rounded-full object-cover object-center"
-                  ></img>
+                <div className="flex ">
+
+                  <h2 class="text-3xl text-white">แสงทองแอร์</h2>
+
+
                 </div>
               </div>
               <div className="hidden lg:block justify-between">
@@ -107,7 +116,8 @@ const Navbar = () => {
                   </button>
                   <button
                     className="flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1"
-                  // onClick={() => onChangePage("home")}
+                    onClick={() => onChangePage("history")}
+
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -121,29 +131,7 @@ const Navbar = () => {
                     </svg>
                     ประวัติการใช้บริการ
                   </button>
-                  <button
-                    className="flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1"
-                  // onClick={() => onChangePage("cart")}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-clipboard-check"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"
-                        />
-                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
-                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
-                      </svg>
-                      <span>ตรวจสอบสถานะการติดตั้ง</span>
-                    </div>
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -229,7 +217,7 @@ const Navbar = () => {
               <div>
                 <button
                   className="w-full flex justify-center gap-3 bg-gray-800 rounded text-white text-sm hover:bg-gray-700 px-3 py-1 "
-                // onClick={() => onChangePage("home")}
+                  onClick={() => onChangePage("history")}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

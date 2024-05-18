@@ -8,7 +8,7 @@ import {
   Tooltip,
   IconButton,
 } from "@material-tailwind/react";
-const Typeproduct = ({ product, onShowModal }) => {
+const Typeproduct = ({ product, onShowModal }) => { //ส่ง Productlist เข้ามาเเต่ละตัว เพื่อนลูปในการแสดง product
   return (
     <Card className="w-full max-w-[26rem] shadow-lg bg-gray-200 mb-5">
       <CardHeader floated={false} color="blue-gray">
@@ -17,16 +17,22 @@ const Typeproduct = ({ product, onShowModal }) => {
           alt="ui/ux review check"
         />
         <div className="to-bg-black-10 absolute h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60" />
+
       </CardHeader>
       <CardBody>
         <div className="mb-3 flex items-center justify-between">
           <Typography variant="h5" color="blue-gray" className="font-medium">
             {product?.product_name}
+            <Typography variant="h5" color="blue-gray" className="font-medium">
+              BTU : {product?.product_btu}
+            </Typography>
           </Typography>
+
           <Typography
             color="blue-gray"
             className="flex items-center gap-1.5 font-normal"
           >
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -39,9 +45,12 @@ const Typeproduct = ({ product, onShowModal }) => {
                 clipRule="evenodd"
               />
             </svg>
+
+            จำนวน<br></br>
             {product?.product_quantity}
           </Typography>
         </div>
+
         <Typography color="gray">
           {product?.product_detail.split(" -").join("<br>-")}
         </Typography>
@@ -60,7 +69,7 @@ const Typeproduct = ({ product, onShowModal }) => {
           className=""
           onClick={() => onShowModal(product)}
         >
-          Reserve
+          สั่งซื้อสินค้า
         </Button>
       </CardFooter>
     </Card>

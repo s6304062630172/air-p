@@ -4,6 +4,8 @@ import { Button } from "@material-tailwind/react";
 import Axios from 'axios';
 
 const Userquo = () => {
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [productOptions, setProductOptions] = useState([]);
     const [formData, setFormData] = useState({
         date_: '',
         id_tax_user: '',
@@ -33,8 +35,7 @@ const Userquo = () => {
                 alert('An error occurred. Please try again.');
             });
     };
-    const [selectedProducts, setSelectedProducts] = useState([]);
-    const [productOptions, setProductOptions] = useState([]);
+   
     useEffect(() => {
         Axios.get('http://localhost:3001/selectproduct')
             .then(res => {

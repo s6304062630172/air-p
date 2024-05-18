@@ -3,60 +3,75 @@ import Barservice from "./barservice";
 import Promote from "./promote";
 import Typeproduct from "./typeproduct";
 import _apiProduct from "../../api/product";
+import _apiUser from "../../api/user";
 import Modal from "./modal/modal";
 import { onBuyProduct, onGetProductCart } from "../../helpers/storage";
 import { Badge } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import Quo_modal from "./modal/quo_modal";
+import CalculateBTU from "./modal/calculateBTU"
 import axios from "axios";
+import { Calculate } from "@mui/icons-material";
 const Home = () => {
+  const [userList, setuserList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [productListOriginal, setProductListOriginal] = useState([]);
   const [productClick, setProductClick] = useState([]);
   const [statusModal, setStatusModal] = useState(false);
+  const [BTU_statusModal, setBTU_statusModal] = useState(false);
+  const [quo_statusModal, setQuo_statusModal] = useState(false);
   const [type, setType] = useState([]);
   const [itemCart, setItemCart] = useState(0);
-  const [userinfo, setUserinfo] = useState([]);
   const username = localStorage.getItem("username"); // แทนที่ด้วยชื่อผู้ใช้ที่ต้องการดึงข้อมูล
-
-
+  const email = localStorage.getItem("email")
+  ///////////////เช็คauth////////////////////////////
+/////////////////////////////////////////////////////
   const onLoadData = async () => {
+    const userinfomation = await _apiUser.getUser(username);
     const result = await _apiProduct.getProduct();
     const resultType = await _apiProduct.getProductType();
     setProductList(result);
     setProductListOriginal(result);
     setType(resultType);
-
-
+    setuserList(userinfomation);
   };
-  const getUser = () => {
-    if (username) { // ตรวจสอบว่ามี username ใน LocalStorage หรือไม่
-      axios.get(`http://localhost:3001/userInfo/${username}`)
-        .then(res => {
-          setUserinfo(res.data[0])
 
-        })
-        .catch(err => console.log(err));
-    }
-
-  }
-
-
-
-
-  const onShowModal = (product) => {
-    setProductClick(product);
+  const onShowModal = (product) => { // product ที่รับมาจาก typeproduct ที่เลือก 
+    setProductClick(product); 
     setStatusModal(true);
-    console.log("productClick");
-    console.log("--->", document.getElementById("modal-A"));
+    // console.log("productClick");
+    // console.log("--->", document.getElementById("modal-A"));
     document.getElementById("modal").showModal();
   };
-
   const returnCloseModal = () => {
     setStatusModal(false);
     document.getElementById("modal").close();
   };
+///BTU modal
+  const onShowBTUModal = () =>{
+    setBTU_statusModal(true);
+    document.getElementById("BTU_modal").showModal();
+    
+  }
+  const returnCloseBTUModal =()=>{
+    setBTU_statusModal(false);
+    document.getElementById("BTU_modal").close();
+  }
+//quo _ modal
+const onShowquoModal = () =>{
+  setQuo_statusModal(true);
+  document.getElementById("quo_modal").showModal();
+  
+}
+const returnClosequoModal =()=>{
+  setQuo_statusModal(false);
+  document.getElementById("quo_modal").close();
+}
 
-  const returnSubmitData = (formData) => {
+  const returnSubmitData = async (formData) => {
+    const formData_add_email = Object.assign({}, formData, { email: email });
+    console.log("formData_add_email",formData_add_email)
+    await _apiProduct.cart(formData_add_email);
     const productCart = onGetProductCart();
     if (productCart === null) {
       onBuyProduct([formData]);
@@ -68,7 +83,6 @@ const Home = () => {
     setStatusModal(false);
     document.getElementById("modal").close();
   };
-
   const onSelectType = (typeID) => {
     if (typeID == "all") {
       setProductList(productListOriginal);
@@ -98,12 +112,6 @@ const Home = () => {
     const productCart = onGetProductCart();
     setItemCart(productCart?.length || 0);
   }, []);
-  useEffect(() => {
-    getUser();
-    localStorage.setItem("userinfo", JSON.stringify(userinfo));
-  }, [userinfo]);
-
-
   return (
     <>
       <Link to="/" id="cart"></Link>
@@ -114,20 +122,36 @@ const Home = () => {
         type={type}
         onSelectType={onSelectType}
         searchName={onSearchName}
+        onShowBTUModal={onShowBTUModal}
+        returnCloseBTUModal ={returnCloseBTUModal}
+        onShowquoModal={onShowquoModal}
+        returnClosequoModal={returnClosequoModal}
+
+
+
       />
       <div className="flex flex-wrap justify-center md:justify-start mr-5 mb-10 md:gap-5 gap-2 px-5 md:mx-10">
         {productList.map((item, index) => (
           <Typeproduct product={item} key={index} onShowModal={onShowModal} />
         ))}
       </div>
-      <Modal
+      <Modal //กดเข้า Modal
         productClick={productClick || {}}
         returnCloseModal={returnCloseModal}
         statusModal={statusModal}
         returnSubmitData={returnSubmitData}
       ></Modal>
+   
+       <Quo_modal 
+        quo_statusModal={quo_statusModal}
+        returnClosequoModal={returnCloseBTUModal}
+      ></Quo_modal>
+       <CalculateBTU 
+        BTU_statusModal={BTU_statusModal}
+        returnCloseBTUModal={returnCloseBTUModal}
+      ></CalculateBTU>
       <div className="flex justify-end sticky bottom-0 right-0 mr-5 mb-2 md:gap-5 gap-2 px-5 md:mx-20 py-5">
-        <Badge content={itemCart} className="w-10 h-10">
+        <Badge content={itemCart} className="w-10 h-10"> 
           <button
             onClick={() => document.getElementById("cart").click()}
             className="rounded-full bg-red-900 hover:bg-red-700 font-bold py-2 px-4 h-16 w-16"

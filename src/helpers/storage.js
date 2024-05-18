@@ -1,6 +1,7 @@
 const onBuyProduct = (value) => {
   if (value) {
-    localStorage.setItem("productCart", JSON.stringify(value)); /// ส่งค่า value มาเก็บ ใน local storage
+    localStorage.setItem("productCart", JSON.stringify(value));
+    console.log(value) /// ส่งค่า value มาเก็บ ใน local storage
   }
 };
 
@@ -12,5 +13,4 @@ const onGetProductCart = () => {  /////เมื่อมีคนเรีย�
 const onClearProductCart = () => {
   localStorage.removeItem("productCart"); /// นำข้อมูลออกจาก local storage 
 }
-
 export { onBuyProduct, onGetProductCart, onClearProductCart };
